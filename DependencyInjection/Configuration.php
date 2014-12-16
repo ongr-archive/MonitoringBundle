@@ -26,6 +26,22 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ongr_monitoring');
+        $rootNode
+            ->children()
+                ->scalarNode('es_manager')
+                    ->defaultValue('monitoring')
+                ->end()
+                ->arrayNode('commands')
+                    ->prototype('variable')
+                        ->treatNullLike([])
+                    ->end()
+                ->end()
+                ->arrayNode('metric_collectors')
+                    ->prototype('variable')
+                        ->treatNullLike([])
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }
