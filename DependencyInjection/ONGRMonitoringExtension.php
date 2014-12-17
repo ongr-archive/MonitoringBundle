@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class ONGRMonitoringExtension extends Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -30,8 +30,11 @@ class ONGRMonitoringExtension extends Extension
         /** @noinspection PhpUnusedLocalVariableInspection */
         $config = $this->processConfiguration($configuration, $configs);
 
-        //  Loading configs
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+
+        if (!empty($config['es_manager'])) {
+            $container->setParameter('ongr_monitoring.es_manager', $config['es_manager']);
+        }
     }
 }
