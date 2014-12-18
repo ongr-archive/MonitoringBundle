@@ -30,6 +30,17 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
         $container->setParameter('ongr_monitoring.es_manager', 'monitoring');
         $container->setDefinition('ongr_monitoring.metric_collector', new Definition());
 
+        $container->setParameter(
+            'ongr_monitoring.active_collectors',
+            [
+                'document_count' => [
+                    [
+                        'name' => 'foo',
+                        'document' => 'ONGRMonitoringBundle:Metric',
+                    ],
+                ],
+            ]
+        );
         $definition = new Definition();
         $definition->addTag('ongr_monitoring.metric', ['metric' => 'metric']);
         $container->setDefinition('ongr_monitoring.fake.metric', $definition);
@@ -38,12 +49,14 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
             $container->getDefinition('ongr_monitoring.metric_collector')->hasMethodCall('addMetric')
         );
 
+        $definition = new Definition();
+        $definition->addTag('ongr_monitoring.metric', ['metric' => 'document_count']);
+        $container->setDefinition('ongr_monitoring.document_count.metric', $definition);
+
         $pass = new CollectorMetricsPass();
         $pass->process($container);
 
-        $this->assertTrue(
-            $container->getDefinition('ongr_monitoring.metric_collector')->hasMethodCall('addMetric')
-        );
+        $this->assertArrayHasKey('foo', $container->getDefinition('ongr_monitoring.metric_collector')->getArgument(0));
     }
 
     /**
@@ -55,6 +68,8 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
         $container->setDefinition('ongr_monitoring.metric_collector', new Definition());
+
+        $container->setParameter('ongr_monitoring.es_manager', '');
 
         $definition = new Definition();
         $definition->addTag('ongr_monitoring.metric', ['BAD NAME' => 'metric']);

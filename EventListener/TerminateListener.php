@@ -26,13 +26,14 @@ class TerminateListener extends BaseEventListener
      */
     protected function capture($event)
     {
-        $ended = new \DateTime('now', null);
+        $data = [];
+        $data['ended'] = new \DateTime('now', null);
         /** @var Repository $repository */
         $document = $this->manager->getRepository('ONGRMonitoringBundle:Event')->find(
             $this->eventIdManager->getId($event->getCommand())
         );
 
-        $document->ended = $ended;
+        $document->assign($data);
 
         $this->manager->persist($document);
         $this->manager->commit();

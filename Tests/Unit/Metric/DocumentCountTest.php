@@ -34,16 +34,25 @@ class DocumentCountTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManagerMock();
 
         $repository = $this->getMockBuilder('ONGR\MonitoringBundle\ORM\Repository')
-            ->setMethods(['findBy'])
+            ->setMethods(['createSearch', 'execute'])
             ->disableOriginalConstructor()
             ->getMock();
+
+        $search = $this
+            ->getMockBuilder('ONGR\ElasticsearchBundle\DSL\Search')
+            ->disableOriginalConstructor()
+            ->setMethods(['addQuery'])
+            ->getMock();
+        $search->expects($this->once())->method('addQuery');
 
         $manager
             ->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
-        $repository->expects($this->once())->method('findBy')
+        $repository->expects($this->once())->method('createSearch')
+            ->will($this->returnValue($search));
+        $repository->expects($this->once())->method('execute')
             ->will($this->returnValue($docIteratorMock));
 
         $metric = new DocumentCount($manager, 'docCount');

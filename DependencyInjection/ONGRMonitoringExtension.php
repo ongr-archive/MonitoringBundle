@@ -36,5 +36,11 @@ class ONGRMonitoringExtension extends Extension
         if (!empty($config['es_manager'])) {
             $container->setParameter('ongr_monitoring.es_manager', $config['es_manager']);
         }
+
+        $activeCollectors = [];
+        if (!empty($config['metric_collectors'])) {
+            $activeCollectors = $config['metric_collectors'];
+        }
+        $container->setParameter('ongr_monitoring.active_collectors', $activeCollectors);
     }
 }

@@ -11,6 +11,7 @@
 
 namespace ONGR\MonitoringBundle\Metric;
 
+use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
 
@@ -30,13 +31,25 @@ class DocumentCount implements MetricInterface
     protected $manager;
 
     /**
+     * @var string
+     */
+    protected $type = 'document_count';
+
+    /**
+     * @var string
+     */
+    protected $repositoryClass;
+
+    /**
      * @param Manager $manager
      * @param string  $name
+     * @param string  $repositoryClass
      */
-    public function __construct($manager, $name)
+    public function __construct($manager, $name = null, $repositoryClass = null)
     {
         $this->manager = $manager;
         $this->name = $name;
+        $this->repositoryClass = $repositoryClass;
     }
 
     /**
@@ -46,9 +59,14 @@ class DocumentCount implements MetricInterface
      */
     public function getValue()
     {
-        $repository = $this->manager->getRepository('ONGRMonitoringBundle:Metric');
+        $repository = $this->manager->getRepository($this->getRepositoryClass());
+        if (!$repository) {
+            $repository = $this->manager->getRepository('ONGRMonitoringBundle:Metric');
+        }
 
-        $results = $repository->findBy(['metric' => $this->getName()], [], 0, null, Repository::RESULTS_RAW_ITERATOR);
+        $search = $repository->createSearch()->addQuery(new MatchAllQuery());
+
+        $results = $repository->execute($search, Repository::RESULTS_RAW_ITERATOR);
 
         return $results->getTotalCount();
     }
@@ -61,5 +79,15 @@ class DocumentCount implements MetricInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get metric repository class.
+     *
+     * @return string
+     */
+    public function getRepositoryClass()
+    {
+        return $this->repositoryClass;
     }
 }

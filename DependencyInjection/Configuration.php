@@ -36,13 +36,48 @@ class Configuration implements ConfigurationInterface
                         ->treatNullLike([])
                     ->end()
                 ->end()
-                ->arrayNode('metric_collectors')
-                    ->prototype('variable')
-                        ->treatNullLike([])
+                ->append($this->getMetricCollectorsNode())
+            ->end();
+
+        return $treeBuilder;
+    }
+
+    /**
+     * Metric collectors configuration node.
+     *
+     * @return \Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    public function getMetricCollectorsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('metric_collectors');
+
+        /** NodeDefinition $node */
+        $node
+            ->info('Metric collectors configuration node')
+            ->children()
+                ->arrayNode('document_count')
+                    ->prototype('array')
+                    ->children()
+                        ->scalarNode('name')
+                            ->isRequired()
+                        ->end()
+                        ->scalarNode('document')
+                            ->isRequired()
+                                ->validate()
+                                    ->ifTrue(
+                                        function ($v) {
+                                            return !preg_match('/.*Bundle:\w+/', $v);
+                                        }
+                                    )
+                                    ->thenInvalid('%s is not a ES document.')
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();
 
-        return $treeBuilder;
+        return $node;
     }
 }

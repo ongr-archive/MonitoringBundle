@@ -13,6 +13,7 @@ namespace ONGR\MonitoringBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -25,10 +26,22 @@ class CollectorMetricsPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        $manager = $container->getParameter('ongr_monitoring.es_manager');
+        if ($manager) {
+            $esManager = $container->findDefinition(sprintf('es.manager.%s', $manager));
+
+            $managerDefinition = $container->setDefinition('ongr_monitoring.es_manager', $esManager);
+        } else {
+            throw new \RuntimeException(
+                'ongr_monitoring.manager is not set.'
+            );
+        }
+
         $service = $container->getDefinition('ongr_monitoring.metric_collector');
 
         $taggedDefinitions = $container->findTaggedServiceIds('ongr_monitoring.metric');
-
+        $metrics = $container->getParameter('ongr_monitoring.active_collectors');
+        $collectors = [];
         foreach ($taggedDefinitions as $id => $tags) {
             foreach ($tags as $tag) {
                 if (!isset($tag['metric'])) {
@@ -36,19 +49,16 @@ class CollectorMetricsPass implements CompilerPassInterface
                         "All services tagged with 'ongr_monitoring.metric' must have 'name' property set."
                     );
                 }
-                $service->addMethodCall('addMetric', [new Reference($id), $tag['metric']]);
+                if (isset($metrics[$tag['metric']])) {
+                    foreach ($metrics[$tag['metric']] as $metric) {
+                        $collectors[$metric['name']] = new Definition(
+                            new Reference($id),
+                            [$managerDefinition, $metric['name'], $metric['document']]
+                        );
+                    }
+                }
             }
         }
-
-        $manager = $container->getParameter('ongr_monitoring.es_manager');
-        if ($manager) {
-            $esManager = $container->findDefinition(sprintf('es.manager.%s', $manager));
-
-            $container->setDefinition('ongr_monitoring.es_manager', $esManager);
-        } else {
-            throw new \RuntimeException(
-                'ongr_monitoring.manager is not set.'
-            );
-        }
+        $service->addArgument($collectors);
     }
 }

@@ -29,4 +29,11 @@ interface MetricInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Get metric repository class.
+     *
+     * @return string
+     */
+    public function getRepositoryClass();
 }

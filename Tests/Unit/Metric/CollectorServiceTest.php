@@ -40,24 +40,25 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManagerMock();
         $manager->expects($this->once())->method('commit');
         $manager
-            ->expects($this->once())
             ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Metric')
             ->willReturn($repository);
 
         $manager->expects($this->exactly(2))->method('persist');
 
+        $metrics = [];
         $metric1 = $this->getMetricMock();
+        $metric1->expects($this->any())->method('getRepositoryClass')->willReturn('ONGRMonitoringBundle:Metric');
         $metric1->expects($this->once())->method('getName');
         $metric1->expects($this->once())->method('getValue');
+        $metrics['metric 1'] = $metric1;
 
         $metric2 = $this->getMetricMock();
+        $metric1->expects($this->any())->method('getRepositoryClass')->willReturn('ONGRMonitoringBundle:Event');
         $metric2->expects($this->once())->method('getName');
         $metric2->expects($this->once())->method('getValue');
+        $metrics['metric 2'] = $metric2;
 
-        $service = new CollectorService($manager);
-        $service->addMetric($metric1, 'metric 1');
-        $service->addMetric($metric2, 'metric 2');
+        $service = new CollectorService($manager, $metrics);
 
         $service->collect();
     }
@@ -114,7 +115,6 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $manager
             ->expects($this->once())
             ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Metric')
             ->willReturn($repository);
 
         $manager->expects($this->once())->method('commit');
@@ -125,8 +125,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric1->expects($this->once())->method('getName')->willReturn('DummyMetric');
         $metric1->expects($this->once())->method('getValue')->willReturn([1 => 'value-1', 2 => 'value-2']);
 
-        $service = new CollectorService($manager);
-        $service->addMetric($metric1, 'metric 1');
+        $service = new CollectorService($manager, ['metric 1' => $metric1]);
 
         $service->collect();
     }
@@ -164,7 +163,6 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $manager
             ->expects($this->once())
             ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Metric')
             ->willReturn($repository);
 
         $manager->expects($this->once())->method('commit');
@@ -183,8 +181,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric1->expects($this->once())->method('getName')->willReturn('DummyMetric');
         $metric1->expects($this->once())->method('getValue')->willReturn($values);
 
-        $service = new CollectorService($manager);
-        $service->addMetric($metric1, 'metric 1');
+        $service = new CollectorService($manager, ['metric 1' => $metric1]);
 
         $service->collect();
     }
@@ -197,10 +194,9 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
     public function testAddMetricException()
     {
         $manager = $this->getManagerMock();
-        $service = new CollectorService($manager);
 
         $metric1 = new \stdClass();
-        $service->addMetric($metric1, 'metric 1');
+        $service = new CollectorService($manager, ['metric 1' => $metric1]);
     }
 
     /**
@@ -211,10 +207,10 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
     public function testCollectException()
     {
         $manager = $this->getManagerMock();
-        $service = new CollectorService($manager);
 
         $metric1 = $this->getMetricMock();
-        $service->addMetric($metric1, 'metric 1');
+
+        $service = new CollectorService($manager, ['metric 1' => $metric1]);
 
         $service->collect('not existing metric');
     }
@@ -232,32 +228,33 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $manager
             ->expects($this->once())
             ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Metric')
             ->willReturn($repository);
 
         $manager->expects($this->once())->method('commit');
 
+        $metrics = [];
         $metric1 = $this->getMetricMock();
         $metric1->expects($this->never())->method('getName');
         $metric1->expects($this->never())->method('getValue');
+        $metrics['metric 1'] = $metric1;
 
         $metric2 = $this->getMetricMock();
         $metric2->expects($this->once())->method('getName');
         $metric2->expects($this->once())->method('getValue');
+        $metric2->expects($this->once())->method('getRepositoryClass');
+        $metrics['metric 2'] = $metric2;
 
         $metric3 = $this->getMetricMock();
         $metric3->expects($this->never())->method('getName');
         $metric3->expects($this->never())->method('getValue');
+        $metrics['metric 3'] = $metric3;
 
         $metric4 = $this->getMetricMock();
         $metric4->expects($this->never())->method('getName');
         $metric4->expects($this->never())->method('getValue');
+        $metrics['metric 4'] = $metric4;
 
-        $service = new CollectorService($manager);
-        $service->addMetric($metric1, 'metric 1');
-        $service->addMetric($metric2, 'metric 2');
-        $service->addMetric($metric3, 'metric 3');
-        $service->addMetric($metric4, 'metric 4');
+        $service = new CollectorService($manager, $metrics);
 
         $service->collect('metric 2');
     }
