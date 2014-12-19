@@ -51,6 +51,7 @@ class CollectorMetricsPass implements CompilerPassInterface
                 }
                 if (isset($metrics[$tag['metric']])) {
                     foreach ($metrics[$tag['metric']] as $metric) {
+                        $this->checkIfDocumentMapped($metric['document'], $container);
                         $collectors[$metric['name']] = new Definition(
                             new Reference($id),
                             [$managerDefinition, $metric['name'], $metric['document']]
@@ -60,5 +61,30 @@ class CollectorMetricsPass implements CompilerPassInterface
             }
         }
         $service->addArgument($collectors);
+    }
+
+    /**
+     * Checks if document has mapping data in ES metadata collector.
+     *
+     * @param string           $documentClass
+     * @param ContainerBuilder $container
+     *
+     * @throws \RuntimeException
+     */
+    private function checkIfDocumentMapped($documentClass, ContainerBuilder $container)
+    {
+        $metadataCollector = $container->get('es.metadata_collector');
+
+        if (!$metadataCollector) {
+            throw new \RuntimeException(
+                'Could not load es.metadata collector. ElasticsearchBundle not enabled?'
+            );
+        }
+
+        if (!$metadataCollector->getMappingByNamespace($documentClass)) {
+            throw new \RuntimeException(
+                "Invalid ES document mapping for class: {$documentClass}"
+            );
+        }
     }
 }

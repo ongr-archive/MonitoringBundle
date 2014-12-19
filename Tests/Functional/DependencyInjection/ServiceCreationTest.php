@@ -16,9 +16,9 @@ use ONGR\ElasticsearchBundle\Test\ElasticsearchTestCase;
 class ServiceCreationTest extends ElasticsearchTestCase
 {
     /**
-     * Test for filter services registration.
+     * Test ES manager service.
      */
-    public function testServices()
+    public function testEsManagerIsSet()
     {
         $container = self::createClient()->getContainer();
 

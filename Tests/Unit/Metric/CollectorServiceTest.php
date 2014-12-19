@@ -172,10 +172,14 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metricData = new MetricData();
         $metricData->setTag('tag-1');
         $metricData->setValue('value-1');
+        $metricData->setMetric('metric-1');
+
         $values[] = $metricData;
         $metricData = new MetricData();
         $metricData->setTag('tag-2');
         $metricData->setValue('value-2');
+        $metricData->setMetric('metric-2');
+
         $values[] = $metricData;
         $metric1 = $this->getMetricMock();
         $metric1->expects($this->once())->method('getName')->willReturn('DummyMetric');

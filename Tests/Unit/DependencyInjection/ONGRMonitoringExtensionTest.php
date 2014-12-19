@@ -41,6 +41,29 @@ class ONGRMonitoringExtensionTest extends \PHPUnit_Framework_TestCase
                 'ongr_monitoring.es_manager',
                 'monitoring',
             ],
+            [
+                [
+                    'ongr_monitoring' => [
+                        'metric_collectors' => [
+                            'document_count' => [
+                                [
+                                    'name' => 'foo',
+                                    'document' => 'AcmeTestBundle:Foo',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'ongr_monitoring.active_collectors',
+                [
+                    'document_count' => [
+                        [
+                            'name' => 'foo',
+                            'document' => 'AcmeTestBundle:Foo',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 

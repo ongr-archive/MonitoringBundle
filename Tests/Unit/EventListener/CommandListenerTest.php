@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\MonitoringBundle\Tests\Functional\EventListener;
+namespace ONGR\MonitoringBundle\Tests\Unit\EventListener;
 
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
 use ONGR\MonitoringBundle\Document\Event;

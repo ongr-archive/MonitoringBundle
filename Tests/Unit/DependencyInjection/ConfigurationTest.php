@@ -16,7 +16,6 @@ use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * Provides bunlde configuration data.
      *
@@ -68,46 +67,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             ),
         ];
 
-        // Case #2 Invalid document name.
-        $out[] = [
-            [
-                'es_manager' => 'foo_manager',
-                'metric_collectors' => [
-                    'document_count' => [
-                        [
-                            'name' => 'name',
-                            'document' => 'ONGRMonitoringundle:Event',
-                        ],
-                    ],
-                ]
-            ],
-            $expectedConfiguration,
-            true,
-            'Invalid configuration for path "ongr_monitoring.metric_collectors.document_count.0.document": "ONGRMonitoringundle:Event" is not a ES document.',
-        ];
-
         return $out;
     }
 
     /**
      * Tests if expected default values are added.
      *
-     * @param array  $config
-     * @param array  $expected
-     * @param bool   $exception
-     * @param string $exceptionMessage
+     * @param array $config
+     * @param array $expected
      *
      * @dataProvider getTestConfigurationData
      */
-    public function testConfiguration($config, $expected, $exception = false, $exceptionMessage = '')
+    public function testConfiguration($config, $expected)
     {
-        if ($exception) {
-            $this->setExpectedException(
-                '\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
-                $exceptionMessage
-            );
-        }
-
         $processor = new Processor();
         $processedConfig = $processor->processConfiguration(new Configuration(), [$config]);
         $this->assertEquals($expected, $processedConfig);

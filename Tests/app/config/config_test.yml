@@ -30,13 +30,11 @@ ongr_elasticsearch:
             connection: default
             debug: true
             mappings:
+                - AcmeTestBundle
                 - ONGRMonitoringBundle
 ongr_monitoring:
     es_manager: monitoring
-#    commands:
-#        - {name: _COMMAND_NAME1_, ttl: 1}
-#        - {name: _COMMAND_NAME2_, ttl: 2}
     metric_collectors:
         document_count:
-            - { name: foo, document: ONGRMonitoringBundle:Metric }
+            - { name: foo, document: AcmeTestBundle:DocumentCountMetric }
             - { name: bar, document: ONGRMonitoringBundle:Metric }

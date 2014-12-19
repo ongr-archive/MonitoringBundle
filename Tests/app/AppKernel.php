@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
             new ONGR\MonitoringBundle\ONGRMonitoringBundle(),
+            new ONGR\MonitoringBundle\Tests\app\fixture\Acme\TestBundle\AcmeTestBundle(),
         ];
     }
 

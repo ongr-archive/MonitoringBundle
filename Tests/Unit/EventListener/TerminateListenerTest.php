@@ -31,7 +31,6 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getCommand')
             ->will($this->returnValue('testCommandObject'));
 
-
         $eventParser = $this->getMock('ONGR\MonitoringBundle\Helper\EventParser');
 
         $eventManager = $this->getMock('ONGR\MonitoringBundle\Service\EventIdManager');

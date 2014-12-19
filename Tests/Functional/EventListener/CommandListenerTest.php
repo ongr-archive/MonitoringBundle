@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\MonitoringBundle\Tests\EventListener;
+namespace ONGR\MonitoringBundle\Tests\Functional\EventListener;
 
 use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
 use ONGR\ElasticsearchBundle\ORM\Repository;
@@ -43,14 +43,14 @@ class CommandListenerTest extends ElasticsearchTestCase
         $applicationTester->run(
             [
                 'command' => $command->getName(),
-                '--metric' => 'product',
+                '--metric' => 'foo',
             ]
         );
 
         $this->assertEquals(1, $this->getDocumentCount('ONGRMonitoringBundle:Event'), 'Should be created 1 event log');
         $this->assertEquals(
             1,
-            $this->getDocumentCount('ONGRMonitoringBundle:Metric'),
+            $this->getDocumentCount('AcmeTestBundle:DocumentCountMetric'),
             'Should be created 1 metric log'
         );
 
@@ -66,14 +66,14 @@ class CommandListenerTest extends ElasticsearchTestCase
         $applicationTester->run(
             [
                 'command' => $command1->getName(),
-                '--metric' => 'product',
+                '--metric' => 'bar',
             ]
         );
 
         $this->assertEquals(2, $this->getDocumentCount('ONGRMonitoringBundle:Event'), 'Should be created 2 event logs');
         $this->assertEquals(
             2,
-            $this->getDocumentCount('ONGRMonitoringBundle:Metric'),
+            $this->getDocumentCount('AcmeTestBundle:DocumentCountMetric'),
             'Should be created 2 metric logs'
         );
     }
