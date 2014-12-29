@@ -23,6 +23,11 @@ use ONGR\MonitoringBundle\Metric\CollectorService;
 class CollectorServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var string
+     */
+    protected $metricRepository = 'ONGRMonitoringBundle:Metric';
+
+    /**
      * Method to test collecting of metrics.
      */
     public function testCollect()
@@ -58,7 +63,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric2->expects($this->once())->method('getValue');
         $metrics['metric 2'] = $metric2;
 
-        $service = new CollectorService($manager, $metrics);
+        $service = new CollectorService($manager, $this->metricRepository, $metrics);
 
         $service->collect();
     }
@@ -121,7 +126,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric1->expects($this->once())->method('getName')->willReturn('DummyMetric');
         $metric1->expects($this->once())->method('getValue')->willReturn([1 => 'value-1', 2 => 'value-2']);
 
-        $service = new CollectorService($manager, ['metric 1' => $metric1]);
+        $service = new CollectorService($manager, $this->metricRepository, ['metric 1' => $metric1]);
 
         $service->collect();
     }
@@ -177,7 +182,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric1->expects($this->once())->method('getName')->willReturn('DummyMetric');
         $metric1->expects($this->once())->method('getValue')->willReturn($values);
 
-        $service = new CollectorService($manager, ['metric 1' => $metric1]);
+        $service = new CollectorService($manager, $this->metricRepository, ['metric 1' => $metric1]);
 
         $service->collect();
     }
@@ -192,7 +197,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManagerMock();
 
         $metric1 = new \stdClass();
-        $service = new CollectorService($manager, ['metric 1' => $metric1]);
+        $service = new CollectorService($manager, $this->metricRepository, ['metric 1' => $metric1]);
     }
 
     /**
@@ -206,7 +211,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
 
         $metric1 = $this->getMetricMock();
 
-        $service = new CollectorService($manager, ['metric 1' => $metric1]);
+        $service = new CollectorService($manager, $this->metricRepository, ['metric 1' => $metric1]);
 
         $service->collect('not existing metric');
     }
@@ -237,7 +242,6 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric2 = $this->getMetricMock();
         $metric2->expects($this->once())->method('getName');
         $metric2->expects($this->once())->method('getValue');
-        $metric2->expects($this->once())->method('getRepositoryClass');
         $metrics['metric 2'] = $metric2;
 
         $metric3 = $this->getMetricMock();
@@ -250,7 +254,7 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
         $metric4->expects($this->never())->method('getValue');
         $metrics['metric 4'] = $metric4;
 
-        $service = new CollectorService($manager, $metrics);
+        $service = new CollectorService($manager, $this->metricRepository, $metrics);
 
         $service->collect('metric 2');
     }

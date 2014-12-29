@@ -33,11 +33,6 @@ class DocumentCount implements MetricInterface
     /**
      * @var string
      */
-    protected $type = 'document_count';
-
-    /**
-     * @var string
-     */
     protected $repositoryClass;
 
     /**

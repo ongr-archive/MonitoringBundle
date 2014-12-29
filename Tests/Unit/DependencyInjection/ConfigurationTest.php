@@ -26,6 +26,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expectedConfiguration = [
             'es_manager' => 'monitoring',
             'commands' => [],
+            'metric_repository' => 'ONGRMonitoringBundle:Metric',
         ];
 
         $out = [];

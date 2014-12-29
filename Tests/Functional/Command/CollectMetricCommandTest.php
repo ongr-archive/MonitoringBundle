@@ -21,6 +21,31 @@ use Symfony\Component\Console\Tester\CommandTester;
 class CollectMetricCommandTest extends ElasticsearchTestCase
 {
     /**
+     * {@inheritdoc}
+     */
+    protected function getDataArray()
+    {
+        return [
+            'default' => [
+                'product' => [
+                    [
+                        '_id' => 1,
+                        'title' => 'foo',
+                    ],
+                    [
+                        '_id' => 2,
+                        'title' => 'bar',
+                    ],
+                    [
+                        '_id' => 3,
+                        'title' => 'pizza',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Test collect all metrics command case.
      */
     public function testMetricNotSet()

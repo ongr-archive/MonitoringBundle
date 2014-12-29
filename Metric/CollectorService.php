@@ -31,12 +31,14 @@ class CollectorService
 
     /**
      * @param Manager $manager
+     * @param string  $metricRepository
      * @param array   $metrics
      */
-    public function __construct($manager, $metrics = [])
+    public function __construct($manager, $metricRepository, $metrics = [])
     {
         $this->manager = $manager;
         $this->setMetrics($metrics);
+        $this->meticRepository = $metricRepository;
     }
 
     /**
@@ -68,7 +70,7 @@ class CollectorService
     {
         /** @var MetricInterface $metric */
         foreach ($metrics as $metric) {
-            $repository = $this->manager->getRepository($metric->getRepositoryClass());
+            $repository = $this->manager->getRepository($this->meticRepository);
             $values = $metric->getValue();
 
             $implodeKey = true;

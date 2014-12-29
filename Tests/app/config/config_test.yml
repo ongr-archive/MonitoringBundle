@@ -36,5 +36,5 @@ ongr_monitoring:
     es_manager: monitoring
     metric_collectors:
         document_count:
-            - { name: foo, document: AcmeTestBundle:DocumentCountMetric }
+            - { name: foo, document: AcmeTestBundle:Product }
             - { name: bar, document: ONGRMonitoringBundle:Metric }

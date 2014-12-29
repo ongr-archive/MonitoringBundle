@@ -36,6 +36,9 @@ class Configuration implements ConfigurationInterface
                         ->treatNullLike([])
                     ->end()
                 ->end()
+                ->scalarNode('metric_repository')
+                    ->defaultValue('ONGRMonitoringBundle:Metric')
+                ->end()
                 ->append($this->getMetricCollectorsNode())
             ->end();
 

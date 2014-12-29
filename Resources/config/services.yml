@@ -39,6 +39,7 @@ services:
         class: %ongr_monitoring.metric_collector.class%
         arguments:
             - @ongr_monitoring.es_manager
+            - %ongr_monitoring.metric_repository%
 
     ongr_monitoring.metric.document_count:
             class: %ongr_monitoring.metric.document_count.class%
