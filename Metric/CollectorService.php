@@ -31,10 +31,12 @@ class CollectorService
 
     /**
      * @param Manager $manager
+     * @param array   $metrics
      */
-    public function __construct($manager)
+    public function __construct($manager, $metrics = [])
     {
         $this->manager = $manager;
+        $this->setMetrics($metrics);
     }
 
     /**
@@ -64,10 +66,9 @@ class CollectorService
      */
     protected function collectMetrics($metrics)
     {
-        $repository = $this->manager->getRepository('ONGRMonitoringBundle:Metric');
-
         /** @var MetricInterface $metric */
         foreach ($metrics as $metric) {
+            $repository = $this->manager->getRepository($metric->getRepositoryClass());
             $values = $metric->getValue();
 
             $implodeKey = true;
@@ -92,7 +93,10 @@ class CollectorService
                 ];
 
                 $document = $repository->createDocument();
-                $document->assign($data);
+                $document->setMetric($data['metric']);
+                $document->setValue($data['value']);
+                $document->setTag($data['tag']);
+                $document->setCollected($data['collected']);
 
                 $this->manager->persist($document);
             }
@@ -111,5 +115,15 @@ class CollectorService
             throw new \InvalidArgumentException("Metric with name '{$metricName}' must implement MetricInterface.");
         }
         $this->metrics[$metricName] = $metric;
+    }
+
+    /**
+     * @param array $metrics
+     */
+    private function setMetrics($metrics)
+    {
+        foreach ($metrics as $name => $metric) {
+            $this->addMetric($metric, $name);
+        }
     }
 }

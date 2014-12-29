@@ -12,6 +12,7 @@
 namespace ONGR\MonitoringBundle\EventListener;
 
 use ONGR\ElasticsearchBundle\ORM\Manager;
+use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\MonitoringBundle\Helper\EventParser;
 use ONGR\MonitoringBundle\Service\EventIdManager;
 use Symfony\Component\Console\Event\ConsoleEvent;
@@ -25,6 +26,11 @@ abstract class BaseEventListener
      * @var Manager Es manager.
      */
     public $manager;
+
+    /**
+     * @var Repository
+     */
+    public $repository;
 
     /**
      * @var EventParser Event parser object.
@@ -63,7 +69,7 @@ abstract class BaseEventListener
      */
     public function handle($event)
     {
-        if ($this->manager !== null) {
+        if ($this->getManager() !== null) {
             $this->capture($event);
         }
     }
@@ -91,5 +97,21 @@ abstract class BaseEventListener
     public function setManager(Manager $manager)
     {
         $this->manager = $manager;
+    }
+
+    /**
+     * @return Repository
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
+    /**
+     * @param Repository $repository
+     */
+    public function setRepository($repository)
+    {
+        $this->repository = $repository;
     }
 }

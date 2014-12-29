@@ -53,14 +53,66 @@ class Event implements DocumentInterface
     public $ended;
 
     /**
-     * Assign data into document.
-     *
-     * @param array $data
+     * @return string
      */
-    public function assign($data)
+    public function getCommand()
     {
-        foreach ($data as $key => $value) {
-            $this->$key = $value;
-        }
+        return $this->command;
+    }
+
+    /**
+     * @param string $command
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
+    }
+
+    /**
+     * @return string
+     */
+    public function getArgument()
+    {
+        return $this->argument;
+    }
+
+    /**
+     * @param string $argument
+     */
+    public function setArgument($argument)
+    {
+        $this->argument = $argument;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getStarted()
+    {
+        return $this->started;
+    }
+
+    /**
+     * @param \DateTime $started
+     */
+    public function setStarted($started)
+    {
+        $this->started = $started;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getEnded()
+    {
+        return $this->ended;
+    }
+
+    /**
+     * @param \DateTime $ended
+     */
+    public function setEnded($ended)
+    {
+        $this->ended = $ended;
     }
 }

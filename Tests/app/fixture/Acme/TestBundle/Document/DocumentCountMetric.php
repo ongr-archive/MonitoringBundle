@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ONGR\MonitoringBundle\Document;
+namespace ONGR\MonitoringBundle\Tests\app\fixture\Acme\TestBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
 use ONGR\ElasticsearchBundle\Document\DocumentInterface;
@@ -20,7 +20,7 @@ use ONGR\ElasticsearchBundle\Document\DocumentTrait;
  *
  * @ES\Document(type="metric")
  */
-class Metric implements DocumentInterface
+class DocumentCountMetric implements DocumentInterface
 {
     use DocumentTrait;
 

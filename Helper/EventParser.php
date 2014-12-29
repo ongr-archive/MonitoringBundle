@@ -29,9 +29,9 @@ class EventParser
      */
     public function getDocument(DocumentInterface $document, $event)
     {
-        $document->command = $this->getCommandName($event);
-        $document->argument = $this->getArgument($event);
-        $document->started = new \DateTime('now', null);
+        $document->setCommand($this->getCommandName($event));
+        $document->setArgument($this->getArgument($event));
+        $document->setStarted(new \DateTime('now', null));
 
         return $document;
     }

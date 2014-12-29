@@ -34,16 +34,25 @@ class DocumentCountTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getManagerMock();
 
         $repository = $this->getMockBuilder('ONGR\MonitoringBundle\ORM\Repository')
-            ->setMethods(['findBy'])
+            ->setMethods(['createSearch', 'execute'])
             ->disableOriginalConstructor()
             ->getMock();
+
+        $search = $this
+            ->getMockBuilder('ONGR\ElasticsearchBundle\DSL\Search')
+            ->disableOriginalConstructor()
+            ->setMethods(['addQuery'])
+            ->getMock();
+        $search->expects($this->once())->method('addQuery');
 
         $manager
             ->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
-        $repository->expects($this->once())->method('findBy')
+        $repository->expects($this->once())->method('createSearch')
+            ->will($this->returnValue($search));
+        $repository->expects($this->once())->method('execute')
             ->will($this->returnValue($docIteratorMock));
 
         $metric = new DocumentCount($manager, 'docCount');
@@ -73,5 +82,55 @@ class DocumentCountTest extends \PHPUnit_Framework_TestCase
 
         $metric = new DocumentCount($manager, $expected);
         $this->assertEquals($expected, $metric->getName());
+    }
+
+    /**
+     * Test getValue method.
+     */
+    public function testRepositoryNotSet()
+    {
+        $expected = 1;
+
+        $manager = $this->getManagerMock();
+
+        $docIteratorMock = $this
+            ->getMockBuilder('ONGR\ElasticsearchBundle\Result\DocumentIterator')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $docIteratorMock->expects($this->once())->method('getTotalCount')->willReturn(1);
+
+        $repository = $this->getMockBuilder('ONGR\MonitoringBundle\ORM\Repository')
+            ->setMethods(['createSearch', 'execute'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $search = $this
+            ->getMockBuilder('ONGR\ElasticsearchBundle\DSL\Search')
+            ->disableOriginalConstructor()
+            ->setMethods(['addQuery'])
+            ->getMock();
+        $search->expects($this->once())->method('addQuery');
+
+        $repository->expects($this->once())->method('createSearch')
+            ->will($this->returnValue($search));
+        $repository->expects($this->once())->method('execute')->willReturn($docIteratorMock);
+
+        $manager->expects($this->exactly(2))->method('getRepository')->with($this->anything())->will(
+            $this->returnCallback(
+                function ($parameter) use ($repository) {
+                    switch ($parameter) {
+                        case null:
+                            return null;
+                        case 'ONGRMonitoringBundle:Metric':
+                            return $repository;
+                        default:
+                            return null;
+                    }
+                }
+            )
+        );
+
+        $metric = new DocumentCount($manager, 'docCount');
+        $this->assertEquals($expected, $metric->getValue());
     }
 }
