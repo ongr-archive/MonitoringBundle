@@ -17,7 +17,7 @@ use Symfony\Component\Config\Definition\Processor;
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Provides bunlde configuration data.
+     * Provides bundle configuration data.
      *
      * @return array
      */
@@ -49,7 +49,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'document' => 'ONGRMonitoringBundle:Event',
                         ],
                     ],
-                ]
+                ],
             ],
             array_merge(
                 $expectedConfiguration,
