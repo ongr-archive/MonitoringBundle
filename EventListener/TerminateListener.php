@@ -33,7 +33,7 @@ class TerminateListener extends BaseEventListener
             $this->eventIdManager->getId($event->getCommand())
         );
 
-        $document->assign($data);
+        $document->setEnded($data['ended']);
 
         $this->manager->persist($document);
         $this->manager->commit();

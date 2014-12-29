@@ -96,10 +96,6 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('ONGR\MonitoringBundle\Document\Metric')
             ->disableOriginalConstructor()
             ->getMock();
-        $metricMock->expects($this->exactly(2))->method('assign')->withConsecutive(
-            [$this->contains('value-1')],
-            [$this->contains('value-2')]
-        );
 
         /** Repository $repository */
         $repository = $this->getRepositoryMock();
@@ -150,10 +146,6 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Metric $metricMock */
         $metricMock = $this->getMock('ONGR\MonitoringBundle\Document\Metric');
-        $metricMock->expects($this->exactly(2))->method('assign')->withConsecutive(
-            [$this->contains('tag-1')],
-            [$this->contains('value-2')]
-        );
 
         /** @var Repository $repository */
         $repository = $this->getRepositoryMock();

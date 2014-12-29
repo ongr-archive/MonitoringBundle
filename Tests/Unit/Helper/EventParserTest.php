@@ -69,7 +69,7 @@ class EventParserTest extends \PHPUnit_Framework_TestCase
 
         $document = $eventParser->getDocument($document, $command);
 
-        $this->assertEquals($expected['command'], $document->command);
-        $this->assertEquals($expected['argument'], $document->argument);
+        $this->assertEquals($expected['command'], $document->getCommand());
+        $this->assertEquals($expected['argument'], $document->getArgument());
     }
 }

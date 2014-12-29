@@ -53,14 +53,66 @@ class Metric implements DocumentInterface
     public $collected;
 
     /**
-     * Assign data into document.
-     *
-     * @param array $data
+     * @return string
      */
-    public function assign($data)
+    public function getMetric()
     {
-        foreach ($data as $key => $value) {
-            $this->$key = $value;
-        }
+        return $this->metric;
+    }
+
+    /**
+     * @param string $metric
+     */
+    public function setMetric($metric)
+    {
+        $this->metric = $metric;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @param string $tag
+     */
+    public function setTag($tag)
+    {
+        $this->tag = $tag;
+    }
+
+    /**
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param float $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCollected()
+    {
+        return $this->collected;
+    }
+
+    /**
+     * @param \DateTime $collected
+     */
+    public function setCollected($collected)
+    {
+        $this->collected = $collected;
     }
 }

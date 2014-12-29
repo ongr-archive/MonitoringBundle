@@ -93,7 +93,10 @@ class CollectorService
                 ];
 
                 $document = $repository->createDocument();
-                $document->assign($data);
+                $document->setMetric($data['metric']);
+                $document->setValue($data['value']);
+                $document->setTag($data['tag']);
+                $document->setCollected($data['collected']);
 
                 $this->manager->persist($document);
             }
