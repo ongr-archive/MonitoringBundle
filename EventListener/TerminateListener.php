@@ -12,6 +12,7 @@
 namespace ONGR\MonitoringBundle\EventListener;
 
 use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\MonitoringBundle\Document\Event;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 
 /**
@@ -28,12 +29,12 @@ class TerminateListener extends BaseEventListener
     {
         $data = [];
         $data['ended'] = new \DateTime('now', null);
-        /** @var Repository $repository */
-        $document = $this->manager->getRepository('ONGRMonitoringBundle:Event')->find(
+        $document = $this->getRepository()->find(
             $this->eventIdManager->getId($event->getCommand())
         );
 
         $document->setEnded($data['ended']);
+        $document->setStatus(Event::EVENT_TERMINATED);
 
         $this->manager->persist($document);
         $this->manager->commit();

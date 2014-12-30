@@ -24,6 +24,10 @@ class Event implements DocumentInterface
 {
     use DocumentTrait;
 
+    const EVENT_STARTED = 'started';
+    const EVENT_TERMINATED = 'completed';
+    const EVENT_EXCEPTION = 'exception';
+
     /**
      * @var string
      *
@@ -37,6 +41,20 @@ class Event implements DocumentInterface
      * @ES\Property(type="string", name="argument")
      */
     public $argument;
+
+    /**
+     * @var string
+     *
+     * @ES\Property(type="string", name="status")
+     */
+    public $status;
+
+    /**
+     * @var string
+     *
+     * @ES\Property(type="string", name="message")
+     */
+    public $message;
 
     /**
      * @var \DateTime
@@ -114,5 +132,37 @@ class Event implements DocumentInterface
     public function setEnded($ended)
     {
         $this->ended = $ended;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
     }
 }

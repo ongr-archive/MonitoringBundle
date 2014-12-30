@@ -28,13 +28,15 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $command = $this
             ->getMockBuilder('Symfony\Component\Console\Command\Command')
             ->disableOriginalConstructor()
+            ->setMethods(['getName'])
             ->getMock();
+        $command->expects($this->once())->method('getName')->willReturn('acmeCommand');
 
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())->method('getCommand')->will($this->returnValue($command));
+        $event->expects($this->exactly(2))->method('getCommand')->will($this->returnValue($command));
 
         $eventManager = $this->getMock('ONGR\MonitoringBundle\Service\EventIdManager');
         $eventManager
@@ -54,7 +56,8 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         '_id' => 'bazId',
                         'id' => 'bazId',
-                        'command' => 'awesomeName',
+                        'command' => 'acmeCommand',
+                        'status' => null,
                         'argument' => 'fooArg',
                         'started' => new \DateTime('2014-12-16', null),
                     ]
@@ -75,13 +78,6 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('ONGR\ElasticsearchBundle\ORM\Manager')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $manager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Event')
-            ->will($this->returnValue($repository));
-
         $manager
             ->expects($this->once())
             ->method('persist')
@@ -90,7 +86,8 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         '_id' => 'bazId',
                         'id' => 'bazId',
-                        'command' => 'awesomeName',
+                        'command' => 'acmeCommand',
+                        'status' => 'started',
                         'argument' => 'fooArg',
                         'started' => new \DateTime('2014-12-16', null),
                     ]
@@ -99,8 +96,10 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new CommandListener();
         $listener->setManager($manager);
+        $listener->setRepository($repository);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
+        $listener->setTrackedCommands(['acmeCommand']);
         $listener->handle($event);
     }
 
@@ -118,6 +117,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $document->command = $data['command'];
         $document->argument = $data['argument'];
         $document->started = $data['started'];
+        $document->status = $data['status'];
 
         return $document;
     }

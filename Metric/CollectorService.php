@@ -12,6 +12,7 @@
 namespace ONGR\MonitoringBundle\Metric;
 
 use ONGR\ElasticsearchBundle\ORM\Manager;
+use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\MonitoringBundle\Helper\MetricData;
 
 /**
@@ -30,15 +31,20 @@ class CollectorService
     protected $metrics = [];
 
     /**
+     * @var Repository
+     */
+    protected $repository;
+
+    /**
      * @param Manager $manager
-     * @param string  $metricRepository
+     * @param string  $repository
      * @param array   $metrics
      */
-    public function __construct($manager, $metricRepository, $metrics = [])
+    public function __construct($manager, $repository, $metrics = [])
     {
         $this->manager = $manager;
         $this->setMetrics($metrics);
-        $this->meticRepository = $metricRepository;
+        $this->repository = $repository;
     }
 
     /**
@@ -70,7 +76,7 @@ class CollectorService
     {
         /** @var MetricInterface $metric */
         foreach ($metrics as $metric) {
-            $repository = $this->manager->getRepository($this->meticRepository);
+            $repository = $this->repository;
             $values = $metric->getValue();
 
             $implodeKey = true;

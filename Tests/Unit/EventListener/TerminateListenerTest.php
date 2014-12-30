@@ -22,15 +22,18 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute()
     {
+        $command = $this
+            ->getMockBuilder('Symfony\Component\Console\Command\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(['getName'])
+            ->getMock();
+        $command->expects($this->once())->method('getName')->willReturn('fooCommand');
+
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
             ->disableOriginalConstructor()
             ->getMock();
-        $event
-            ->expects($this->once())
-            ->method('getCommand')
-            ->will($this->returnValue('testCommandObject'));
-
+        $event->expects($this->exactly(2))->method('getCommand')->will($this->returnValue($command));
         $eventParser = $this->getMock('ONGR\MonitoringBundle\Helper\EventParser');
 
         $eventManager = $this->getMock('ONGR\MonitoringBundle\Service\EventIdManager');
@@ -43,6 +46,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
         $repository = $this
             ->getMockBuilder('ONGR\ElasticsearchBundle\ORM\Repository')
             ->disableOriginalConstructor()
+            ->setMethods(['find'])
             ->getMock();
 
         $repository
@@ -52,6 +56,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
                 $this->getEventModel(
                     [
                         '_id' => 'bazId',
+                        'status' => 'started',
                         'ended' => new \DateTime('2014-12-14', null),
                     ]
                 )
@@ -63,17 +68,12 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $manager
             ->expects($this->once())
-            ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Event')
-            ->willReturn($repository);
-
-        $manager
-            ->expects($this->once())
             ->method('persist')
             ->with(
                 $this->getEventModel(
                     [
                         '_id' => 'bazId',
+                        'status' => 'completed',
                         'ended' => new \DateTime('now'),
                     ]
                 )
@@ -81,8 +81,10 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new TerminateListener();
         $listener->setManager($manager);
+        $listener->setRepository($repository);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
+        $listener->setTrackedCommands(['fooCommand']);
         $listener->handle($event);
     }
 
@@ -98,6 +100,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
         $document = new Event();
         $document->_id = $data['_id'];
         $document->ended = $data['ended'];
+        $document->status = $data['status'];
 
         return $document;
     }

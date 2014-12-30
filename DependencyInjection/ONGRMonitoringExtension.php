@@ -13,7 +13,9 @@ namespace ONGR\MonitoringBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -43,6 +45,19 @@ class ONGRMonitoringExtension extends Extension
         }
         $container->setParameter('ongr_monitoring.active_collectors', $activeCollectors);
 
-        $container->setParameter('ongr_monitoring.metric_repository', $config['metric_repository']);
+        $metricCollector = $container->getDefinition('ongr_monitoring.metric_collector');
+        $metricCollector->addArgument(new Reference($config['metric_collectors']['repository']));
+
+        $taggedServices = $container->findTaggedServiceIds('kernel.event_listener');
+        foreach ($taggedServices as $id => $tags) {
+            $definition = $container->findDefinition($id);
+            $definition->addMethodCall(
+                'setRepository',
+                [new Reference($config['commands']['repository'])]
+            );
+        }
+
+        $trackedCommands = !empty($config['commands']['commands']) ? $config['commands']['commands'] : [];
+        $container->setParameter('ongr_monitoring.tracked_commands', $trackedCommands);
     }
 }

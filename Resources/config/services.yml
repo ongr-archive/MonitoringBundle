@@ -1,14 +1,12 @@
 parameters:
     ongr_monitoring.command_listener.class: ONGR\MonitoringBundle\EventListener\CommandListener
     ongr_monitoring.terminate_listener.class: ONGR\MonitoringBundle\EventListener\TerminateListener
+    ongr_monitoring.exception_listener.class: ONGR\MonitoringBundle\EventListener\ExceptionListener
     ongr_monitoring.event_parser.class: ONGR\MonitoringBundle\Helper\EventParser
     ongr_monitoring.event_id_manager.class: ONGR\MonitoringBundle\Service\EventIdManager
 
     ongr_monitoring.metric_collector.class: ONGR\MonitoringBundle\Metric\CollectorService
     ongr_monitoring.metric.document_count.class: ONGR\MonitoringBundle\Metric\DocumentCount
-
-    ongr_monitoring.repository.event: ONGRMonitoringBundle:Event
-    ongr_monitoring.repository.metric: ONGRMonitoringBundle:Metric
 
 services:
     ongr_monitoring.event_id_manager:
@@ -16,12 +14,14 @@ services:
 
     ongr_monitoring.event_parser:
         class: %ongr_monitoring.event_parser.class%
+
     ongr_monitoring.command_listener:
         class: %ongr_monitoring.command_listener.class%
         calls:
             - [setManager, [@ongr_monitoring.es_manager]]
             - [setEventParser, [@ongr_monitoring.event_parser]]
             - [setEventIdManager, [@ongr_monitoring.event_id_manager]]
+            - [setTrackedCommands, [%ongr_monitoring.tracked_commands%]]
         tags:
             - { name: kernel.event_listener, event: console.command, method: handle}
 
@@ -29,17 +29,27 @@ services:
         class: %ongr_monitoring.terminate_listener.class%
         calls:
             - [setManager, [@ongr_monitoring.es_manager]]
-            - [setRepository, [%ongr_monitoring.repository.metric%]]
             - [setEventParser, [@ongr_monitoring.event_parser]]
             - [setEventIdManager, [@ongr_monitoring.event_id_manager]]
+            - [setTrackedCommands, [%ongr_monitoring.tracked_commands%]]
         tags:
             - { name: kernel.event_listener, event: console.terminate, method: handle }
+
+    ongr_monitoring.exception_listener:
+        class: %ongr_monitoring.exception_listener.class%
+        calls:
+            - [setManager, [@ongr_monitoring.es_manager]]
+            - [setEventParser, [@ongr_monitoring.event_parser]]
+            - [setEventIdManager, [@ongr_monitoring.event_id_manager]]
+            - [setTrackedCommands, [%ongr_monitoring.tracked_commands%]]
+        tags:
+            - { name: kernel.event_listener, event: console.exception, method: handle }
+
 
     ongr_monitoring.metric_collector:
         class: %ongr_monitoring.metric_collector.class%
         arguments:
             - @ongr_monitoring.es_manager
-            - %ongr_monitoring.metric_repository%
 
     ongr_monitoring.metric.document_count:
             class: %ongr_monitoring.metric.document_count.class%

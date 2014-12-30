@@ -31,18 +31,39 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('es_manager')
                     ->defaultValue('monitoring')
                 ->end()
+                ->append($this->getCommandsCollectorsNode())
+                ->append($this->getMetricCollectorsNode())
+            ->end();
+
+        return $treeBuilder;
+    }
+
+    /**
+     * Commands configuration node.
+     *
+     * @return \Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    public function getCommandsCollectorsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('commands');
+
+        /** NodeDefinition $node */
+        $node
+            ->info('Commands configuration node')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('repository')
+                    ->defaultValue('es.manager.monitoring.event')
+                ->end()
                 ->arrayNode('commands')
                     ->prototype('variable')
                         ->treatNullLike([])
                     ->end()
                 ->end()
-                ->scalarNode('metric_repository')
-                    ->defaultValue('ONGRMonitoringBundle:Metric')
-                ->end()
-                ->append($this->getMetricCollectorsNode())
             ->end();
 
-        return $treeBuilder;
+        return $node;
     }
 
     /**
@@ -58,7 +79,11 @@ class Configuration implements ConfigurationInterface
         /** NodeDefinition $node */
         $node
             ->info('Metric collectors configuration node')
+            ->addDefaultsIfNotSet()
             ->children()
+                ->scalarNode('repository')
+                    ->defaultValue('es.manager.monitoring.metric')
+                ->end()
                 ->arrayNode('document_count')
                     ->prototype('array')
                     ->children()
