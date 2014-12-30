@@ -22,6 +22,8 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute()
     {
+        $repositoryClass = 'ONGRMonitoringBundle:Event';
+
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
             ->disableOriginalConstructor()
@@ -52,6 +54,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
                 $this->getEventModel(
                     [
                         '_id' => 'bazId',
+                        'status' => 'started',
                         'ended' => new \DateTime('2014-12-14', null),
                     ]
                 )
@@ -64,7 +67,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
         $manager
             ->expects($this->once())
             ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Event')
+            ->with($repositoryClass)
             ->willReturn($repository);
 
         $manager
@@ -74,6 +77,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
                 $this->getEventModel(
                     [
                         '_id' => 'bazId',
+                        'status' => 'completed',
                         'ended' => new \DateTime('now'),
                     ]
                 )
@@ -81,6 +85,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new TerminateListener();
         $listener->setManager($manager);
+        $listener->setRepository($repositoryClass);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
         $listener->handle($event);
@@ -98,6 +103,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
         $document = new Event();
         $document->_id = $data['_id'];
         $document->ended = $data['ended'];
+        $document->status = $data['status'];
 
         return $document;
     }

@@ -25,6 +25,8 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute()
     {
+        $repositoryClass = 'ONGRMonitoringBundle:Event';
+
         $command = $this
             ->getMockBuilder('Symfony\Component\Console\Command\Command')
             ->disableOriginalConstructor()
@@ -55,6 +57,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
                         '_id' => 'bazId',
                         'id' => 'bazId',
                         'command' => 'awesomeName',
+                        'status' => null,
                         'argument' => 'fooArg',
                         'started' => new \DateTime('2014-12-16', null),
                     ]
@@ -79,7 +82,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $manager
             ->expects($this->once())
             ->method('getRepository')
-            ->with('ONGRMonitoringBundle:Event')
+            ->with($repositoryClass)
             ->will($this->returnValue($repository));
 
         $manager
@@ -91,6 +94,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
                         '_id' => 'bazId',
                         'id' => 'bazId',
                         'command' => 'awesomeName',
+                        'status' => 'started',
                         'argument' => 'fooArg',
                         'started' => new \DateTime('2014-12-16', null),
                     ]
@@ -99,6 +103,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new CommandListener();
         $listener->setManager($manager);
+        $listener->setRepository($repositoryClass);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
         $listener->handle($event);
@@ -118,6 +123,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $document->command = $data['command'];
         $document->argument = $data['argument'];
         $document->started = $data['started'];
+        $document->status = $data['status'];
 
         return $document;
     }
