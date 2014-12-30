@@ -104,10 +104,17 @@ class CommandListenerTest extends ElasticsearchTestCase
             ]
         );
 
+        $eventDocument = $this->getEventByStatus('ONGRMonitoringBundle:Event', 'exception');
+
         $this->assertEquals(
             1,
-            $this->getDocumentCountByStatus('ONGRMonitoringBundle:Event', 'exception'),
+            $eventDocument['hits']['total'],
             'Should be created 1 command log wiht status exception.'
+        );
+        $this->assertEquals(
+            "Metric with name 'buz' was not found.",
+            $eventDocument['hits']['hits'][0]['_source']['message'],
+            "Message text should be set to Metric with name 'buz' was not found."
         );
     }
 
@@ -119,13 +126,13 @@ class CommandListenerTest extends ElasticsearchTestCase
      *
      * @return mixed
      */
-    private function getDocumentCountByStatus($documentType, $status)
+    private function getEventByStatus($documentType, $status)
     {
         $manager = $this->getManager('monitoring', false);
         $repository = $manager->getRepository($documentType);
         $search = $repository->createSearch()->addQuery(new TermQuery('status', $status, []));
 
-        return $this->parseResults($repository->execute($search, Repository::RESULTS_RAW));
+        return $repository->execute($search, Repository::RESULTS_RAW);
     }
 
     /**

@@ -50,6 +50,13 @@ class Event implements DocumentInterface
     public $status;
 
     /**
+     * @var string
+     *
+     * @ES\Property(type="string", name="message")
+     */
+    public $message;
+
+    /**
      * @var \DateTime
      *
      * @ES\Property(name="started", type="date")
@@ -141,5 +148,21 @@ class Event implements DocumentInterface
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
     }
 }

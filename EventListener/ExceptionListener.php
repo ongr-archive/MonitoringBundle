@@ -36,6 +36,7 @@ class ExceptionListener extends BaseEventListener
 
         $document->setId($this->eventIdManager->getId($event->getCommand()));
         $document->setStatus(Event::EVENT_EXCEPTION);
+        $document->setMessage($event->getException()->getMessage());
 
         $this->manager->persist($document);
         $this->manager->commit();

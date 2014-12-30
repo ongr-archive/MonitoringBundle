@@ -32,7 +32,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getName'])
             ->getMock();
-        $command->expects($this->once())->method('getName')->willReturn('awesomeName');
+        $command->expects($this->once())->method('getName')->willReturn('foo');
 
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
@@ -58,7 +58,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         '_id' => 'bazId',
                         'id' => 'bazId',
-                        'command' => 'awesomeName',
+                        'command' => 'foo',
                         'status' => null,
                         'argument' => 'fooArg',
                         'started' => new \DateTime('2014-12-16', null),
@@ -95,7 +95,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         '_id' => 'bazId',
                         'id' => 'bazId',
-                        'command' => 'awesomeName',
+                        'command' => 'foo',
                         'status' => 'started',
                         'argument' => 'fooArg',
                         'started' => new \DateTime('2014-12-16', null),
@@ -108,7 +108,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $listener->setRepository($repositoryClass);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
-        $listener->setTrackedCommands(['awesomeName']);
+        $listener->setTrackedCommands(['foo']);
         $listener->handle($event);
     }
 

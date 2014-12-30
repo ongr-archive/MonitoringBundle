@@ -29,7 +29,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getName'])
             ->getMock();
-        $command->expects($this->once())->method('getName')->willReturn('awesomeName');
+        $command->expects($this->once())->method('getName')->willReturn('foo');
 
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
@@ -91,7 +91,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
         $listener->setRepository($repositoryClass);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
-        $listener->setTrackedCommands(['awesomeName']);
+        $listener->setTrackedCommands(['foo']);
         $listener->handle($event);
     }
 
