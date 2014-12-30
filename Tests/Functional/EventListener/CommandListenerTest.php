@@ -12,6 +12,8 @@
 namespace ONGR\MonitoringBundle\Tests\Functional\EventListener;
 
 use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
+use ONGR\ElasticsearchBundle\DSL\Query\TermQuery;
+use ONGR\ElasticsearchBundle\DSL\Query\TermsQuery;
 use ONGR\ElasticsearchBundle\ORM\Repository;
 use ONGR\ElasticsearchBundle\Test\ElasticsearchTestCase;
 use ONGR\MonitoringBundle\Command\CollectMetricCommand;
@@ -76,6 +78,61 @@ class CommandListenerTest extends ElasticsearchTestCase
             $this->getDocumentCount('AcmeTestBundle:DocumentCountMetric'),
             'Should be created 2 metric logs'
         );
+    }
+
+    /**
+     * Test if exception was logged correctly.
+     */
+    public function testExceptionListener()
+    {
+        $container = $this->getContainer();
+
+        $command = new CollectMetricCommand();
+        $command->setContainer($container);
+
+        $app = new Application();
+        $dispatcher = $container->get('event_dispatcher');
+        $app->setDispatcher($dispatcher);
+        $app->setAutoExit(false);
+        $app->add($command);
+
+        $applicationTester = new ApplicationTester($app);
+        $applicationTester->run(
+            [
+                'command' => $command->getName(),
+                '--metric' => 'buz',
+            ]
+        );
+
+        $eventDocument = $this->getEventByStatus('ONGRMonitoringBundle:Event', 'exception');
+
+        $this->assertEquals(
+            1,
+            $eventDocument['hits']['total'],
+            'Should be created 1 command log wiht status exception.'
+        );
+        $this->assertEquals(
+            "Metric with name 'buz' was not found.",
+            $eventDocument['hits']['hits'][0]['_source']['message'],
+            "Message text should be set to Metric with name 'buz' was not found."
+        );
+    }
+
+    /**
+     * Get document count by status from ES.
+     *
+     * @param string $documentType
+     * @param string $status
+     *
+     * @return mixed
+     */
+    private function getEventByStatus($documentType, $status)
+    {
+        $manager = $this->getManager('monitoring', false);
+        $repository = $manager->getRepository($documentType);
+        $search = $repository->createSearch()->addQuery(new TermQuery('status', $status, []));
+
+        return $repository->execute($search, Repository::RESULTS_RAW);
     }
 
     /**

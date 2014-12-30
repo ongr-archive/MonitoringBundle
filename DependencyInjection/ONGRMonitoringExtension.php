@@ -42,5 +42,8 @@ class ONGRMonitoringExtension extends Extension
             $activeCollectors = $config['metric_collectors'];
         }
         $container->setParameter('ongr_monitoring.active_collectors', $activeCollectors);
+
+        $trackedCommands = !empty($config['commands']) ? $config['commands'] : [];
+        $container->setParameter('ongr_monitoring.tracked_commands', $trackedCommands);
     }
 }
