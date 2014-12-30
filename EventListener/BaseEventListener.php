@@ -43,6 +43,11 @@ abstract class BaseEventListener
     public $eventIdManager;
 
     /**
+     * @var array
+     */
+    protected $trackedCommands;
+
+    /**
      * Setter for the EventParser object.
      *
      * @param EventParser $eventParser EventParser object.
@@ -69,7 +74,7 @@ abstract class BaseEventListener
      */
     public function handle($event)
     {
-        if ($this->getManager() !== null) {
+        if (in_array($event->getCommand()->getName(), $this->trackedCommands) && $this->getManager() !== null) {
             $this->capture($event);
         }
     }
@@ -113,5 +118,13 @@ abstract class BaseEventListener
     public function setRepository($repository)
     {
         $this->repository = $repository;
+    }
+
+    /**
+     * @param array $commands
+     */
+    public function setTrackedCommands($commands)
+    {
+        $this->trackedCommands = $commands;
     }
 }

@@ -30,13 +30,15 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $command = $this
             ->getMockBuilder('Symfony\Component\Console\Command\Command')
             ->disableOriginalConstructor()
+            ->setMethods(['getName'])
             ->getMock();
+        $command->expects($this->once())->method('getName')->willReturn('awesomeName');
 
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())->method('getCommand')->will($this->returnValue($command));
+        $event->expects($this->exactly(2))->method('getCommand')->will($this->returnValue($command));
 
         $eventManager = $this->getMock('ONGR\MonitoringBundle\Service\EventIdManager');
         $eventManager
@@ -106,6 +108,7 @@ class CommandListenerTest extends \PHPUnit_Framework_TestCase
         $listener->setRepository($repositoryClass);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
+        $listener->setTrackedCommands(['awesomeName']);
         $listener->handle($event);
     }
 

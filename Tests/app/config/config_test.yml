@@ -34,6 +34,8 @@ ongr_elasticsearch:
                 - ONGRMonitoringBundle
 ongr_monitoring:
     es_manager: monitoring
+    commands:
+        - ongr:monitoring:metrics:collect
     metric_collectors:
         document_count:
             - { name: foo, document: AcmeTestBundle:DocumentCountMetric }

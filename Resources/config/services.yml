@@ -25,6 +25,7 @@ services:
             - [setRepository, [%ongr_monitoring.repository.event%]]
             - [setEventParser, [@ongr_monitoring.event_parser]]
             - [setEventIdManager, [@ongr_monitoring.event_id_manager]]
+            - [setTrackedCommands, [%ongr_monitoring.tracked_commands%]]
         tags:
             - { name: kernel.event_listener, event: console.command, method: handle}
 
@@ -35,6 +36,7 @@ services:
             - [setRepository, [%ongr_monitoring.repository.event%]]
             - [setEventParser, [@ongr_monitoring.event_parser]]
             - [setEventIdManager, [@ongr_monitoring.event_id_manager]]
+            - [setTrackedCommands, [%ongr_monitoring.tracked_commands%]]
         tags:
             - { name: kernel.event_listener, event: console.terminate, method: handle }
 
@@ -45,6 +47,7 @@ services:
             - [setRepository, [%ongr_monitoring.repository.event%]]
             - [setEventParser, [@ongr_monitoring.event_parser]]
             - [setEventIdManager, [@ongr_monitoring.event_id_manager]]
+            - [setTrackedCommands, [%ongr_monitoring.tracked_commands%]]
         tags:
             - { name: kernel.event_listener, event: console.exception, method: handle }
 
