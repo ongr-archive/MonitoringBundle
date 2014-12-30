@@ -16,9 +16,9 @@ use ONGR\MonitoringBundle\Document\Event;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 
 /**
- * Class to listen to console commands.
+ * Class to listen to console commands exception events.
  */
-class CommandListener extends BaseEventListener
+class ExceptionListener extends BaseEventListener
 {
     /**
      * {@inheritdoc}
@@ -33,9 +33,9 @@ class CommandListener extends BaseEventListener
         /** @var Event $document */
         $document = $repository->createDocument();
         $document = $this->eventParser->getDocument($document, $event);
-        $document->setStatus(Event::EVENT_STARTED);
 
         $document->setId($this->eventIdManager->getId($event->getCommand()));
+        $document->setStatus(Event::EVENT_EXCEPTION);
 
         $this->manager->persist($document);
         $this->manager->commit();
