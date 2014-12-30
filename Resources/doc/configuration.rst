@@ -40,9 +40,16 @@ Example yaml configuration:
                    - AcmeTestBundle
                    - ONGRMonitoringBundle
    ongr_monitoring:
-       es_manager: monitoring
-       metric_collectors:
-           document_count:
-               - { name: foo, document: AcmeTestBundle:Product }
+        es_manager: monitoring
+        commands:
+            repository: es.manager.monitoring.event
+            commands:
+                - ongr:monitoring:metrics:collect
+        metric_collectors:
+            repository: es.manager.monitoring.metric
+            document_count:
+                - { name: foo, document: AcmeTestBundle:Product }
+                - { name: bar, document: ONGRMonitoringBundle:Metric }
+
 
 Monitoring ES manager must have mappings for ONGRMonitoringBundle and for bundles which will be monitored.
