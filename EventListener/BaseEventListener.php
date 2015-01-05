@@ -28,7 +28,7 @@ abstract class BaseEventListener
     public $manager;
 
     /**
-     * @var Repository Repository service.
+     * @var Repository Service.
      */
     public $repository;
 
