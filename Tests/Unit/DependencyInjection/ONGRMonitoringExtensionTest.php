@@ -56,6 +56,7 @@ class ONGRMonitoringExtensionTest extends \PHPUnit_Framework_TestCase
                 ],
                 'ongr_monitoring.active_collectors',
                 [
+                    'repository' => 'es.manager.monitoring.metric',
                     'document_count' => [
                         [
                             'name' => 'foo',

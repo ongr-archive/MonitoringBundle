@@ -26,6 +26,31 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 class CommandListenerTest extends ElasticsearchTestCase
 {
     /**
+     * {@inheritdoc}
+     */
+    protected function getDataArray()
+    {
+        return [
+            'default' => [
+                'product' => [
+                    [
+                        '_id' => 1,
+                        'title' => 'foo',
+                    ],
+                    [
+                        '_id' => 2,
+                        'title' => 'bar',
+                    ],
+                    [
+                        '_id' => 3,
+                        'title' => 'pizza',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Test if two commands from separate applications are logged correctly.
      */
     public function testCapture()
@@ -52,8 +77,13 @@ class CommandListenerTest extends ElasticsearchTestCase
         $this->assertEquals(1, $this->getDocumentCount('ONGRMonitoringBundle:Event'), 'Should be created 1 event log');
         $this->assertEquals(
             1,
-            $this->getDocumentCount('AcmeTestBundle:DocumentCountMetric'),
+            $this->getDocumentCount('ONGRMonitoringBundle:Metric'),
             'Should be created 1 metric log'
+        );
+        $this->assertEquals(
+            3,
+            $this->getDocumentCount('AcmeTestBundle:Product'),
+            'Should be created 3 products'
         );
 
         $command1 = new CollectMetricCommand();
@@ -75,7 +105,7 @@ class CommandListenerTest extends ElasticsearchTestCase
         $this->assertEquals(2, $this->getDocumentCount('ONGRMonitoringBundle:Event'), 'Should be created 2 event logs');
         $this->assertEquals(
             2,
-            $this->getDocumentCount('AcmeTestBundle:DocumentCountMetric'),
+            $this->getDocumentCount('ONGRMonitoringBundle:Metric'),
             'Should be created 2 metric logs'
         );
     }

@@ -29,8 +29,7 @@ class TerminateListener extends BaseEventListener
     {
         $data = [];
         $data['ended'] = new \DateTime('now', null);
-        /** @var Repository $repository */
-        $document = $this->manager->getRepository($this->getRepository())->find(
+        $document = $this->getRepository()->find(
             $this->eventIdManager->getId($event->getCommand())
         );
 

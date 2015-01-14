@@ -27,11 +27,8 @@ class ExceptionListener extends BaseEventListener
      */
     protected function capture($event)
     {
-        /** @var Repository $repository */
-        $repository = $this->manager->getRepository($this->getRepository());
-
         /** @var Event $document */
-        $document = $repository->createDocument();
+        $document = $this->getRepository()->createDocument();
         $document = $this->eventParser->getDocument($document, $event);
 
         $document->setId($this->eventIdManager->getId($event->getCommand()));

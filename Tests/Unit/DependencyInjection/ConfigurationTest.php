@@ -25,7 +25,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $expectedConfiguration = [
             'es_manager' => 'monitoring',
-            'commands' => [],
         ];
 
         $out = [];
@@ -35,18 +34,32 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             [
                 'es_manager' => 'foo_manager',
             ],
-            array_merge($expectedConfiguration, ['es_manager' => 'foo_manager']),
+            array_merge(
+                $expectedConfiguration,
+                [
+                    'es_manager' => 'foo_manager',
+                    'metric_collectors' => [
+                        'repository' => 'es.manager.monitoring.metric',
+                        'document_count' => [],
+                    ],
+                    'commands' => [
+                        'repository' => 'es.manager.monitoring.event',
+                        'commands' => [],
+                    ],
+                ]
+            ),
         ];
 
-        // Case #0 Set metric collectors.
+        // Case #1 Set metric collectors.
         $out[] = [
             [
                 'es_manager' => 'foo_manager',
                 'metric_collectors' => [
+                    'repository' => 'es.manager.monitoring.metric',
                     'document_count' => [
                         [
                             'name' => 'name',
-                            'document' => 'ONGRMonitoringBundle:Event',
+                            'document' => 'es.manager.monitoring.metric',
                         ],
                     ],
                 ],
@@ -56,12 +69,46 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 [
                     'es_manager' => 'foo_manager',
                     'metric_collectors' => [
+                        'repository' => 'es.manager.monitoring.metric',
                         'document_count' => [
                             [
                                 'name' => 'name',
-                                'document' => 'ONGRMonitoringBundle:Event',
+                                'document' => 'es.manager.monitoring.metric',
                             ],
                         ],
+                    ],
+                    'commands' => [
+                        'repository' => 'es.manager.monitoring.event',
+                        'commands' => [],
+                    ],
+                ]
+            ),
+        ];
+
+        // Case #2 Set commands.
+        $out[] = [
+            [
+                'es_manager' => 'foo_manager',
+                'commands' => [
+                    'repository' => 'es.manager.monitoring.event',
+                    'commands' => [
+                        'fooCommand',
+                    ],
+                ],
+            ],
+            array_merge(
+                $expectedConfiguration,
+                [
+                    'es_manager' => 'foo_manager',
+                    'commands' => [
+                        'repository' => 'es.manager.monitoring.event',
+                        'commands' => [
+                            'fooCommand',
+                        ],
+                    ],
+                    'metric_collectors' => [
+                        'repository' => 'es.manager.monitoring.metric',
+                        'document_count' => [],
                     ],
                 ]
             ),

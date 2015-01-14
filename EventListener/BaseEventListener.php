@@ -28,7 +28,7 @@ abstract class BaseEventListener
     public $manager;
 
     /**
-     * @var string Repository class.
+     * @var Repository Service.
      */
     public $repository;
 
@@ -105,7 +105,7 @@ abstract class BaseEventListener
     }
 
     /**
-     * @return string
+     * @return Repository
      */
     public function getRepository()
     {
@@ -113,7 +113,7 @@ abstract class BaseEventListener
     }
 
     /**
-     * @param string $repository
+     * @param Repository $repository
      */
     public function setRepository($repository)
     {

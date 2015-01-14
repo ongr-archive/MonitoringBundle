@@ -35,8 +35,11 @@ ongr_elasticsearch:
 ongr_monitoring:
     es_manager: monitoring
     commands:
-        - ongr:monitoring:metrics:collect
+        repository: es.manager.monitoring.event
+        commands:
+            - ongr:monitoring:metrics:collect
     metric_collectors:
+        repository: es.manager.monitoring.metric
         document_count:
-            - { name: foo, document: AcmeTestBundle:DocumentCountMetric }
+            - { name: foo, document: AcmeTestBundle:Product }
             - { name: bar, document: ONGRMonitoringBundle:Metric }

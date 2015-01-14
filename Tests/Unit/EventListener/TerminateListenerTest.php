@@ -22,14 +22,12 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute()
     {
-        $repositoryClass = 'ONGRMonitoringBundle:Event';
-
         $command = $this
             ->getMockBuilder('Symfony\Component\Console\Command\Command')
             ->disableOriginalConstructor()
             ->setMethods(['getName'])
             ->getMock();
-        $command->expects($this->once())->method('getName')->willReturn('foo');
+        $command->expects($this->once())->method('getName')->willReturn('fooCommand');
 
         $event = $this
             ->getMockBuilder('Symfony\Component\Console\Event\ConsoleCommandEvent')
@@ -48,6 +46,7 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
         $repository = $this
             ->getMockBuilder('ONGR\ElasticsearchBundle\ORM\Repository')
             ->disableOriginalConstructor()
+            ->setMethods(['find'])
             ->getMock();
 
         $repository
@@ -69,12 +68,6 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $manager
             ->expects($this->once())
-            ->method('getRepository')
-            ->with($repositoryClass)
-            ->willReturn($repository);
-
-        $manager
-            ->expects($this->once())
             ->method('persist')
             ->with(
                 $this->getEventModel(
@@ -88,10 +81,10 @@ class TerminateListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new TerminateListener();
         $listener->setManager($manager);
-        $listener->setRepository($repositoryClass);
+        $listener->setRepository($repository);
         $listener->setEventParser($eventParser);
         $listener->setEventIdManager($eventManager);
-        $listener->setTrackedCommands(['foo']);
+        $listener->setTrackedCommands(['fooCommand']);
         $listener->handle($event);
     }
 
