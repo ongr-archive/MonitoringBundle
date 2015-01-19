@@ -54,7 +54,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('repository')
-                    ->defaultValue('es.manager.monitoring.event')
+                    ->defaultValue('default')
                 ->end()
                 ->arrayNode('commands')
                     ->prototype('variable')
@@ -74,27 +74,27 @@ class Configuration implements ConfigurationInterface
     public function getMetricCollectorsNode()
     {
         $builder = new TreeBuilder();
-        $node = $builder->root('metric_collectors');
-
+        $node = $builder->root('metric_collector');
         /** NodeDefinition $node */
         $node
             ->info('Metric collectors configuration node')
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('repository')
-                    ->defaultValue('es.manager.monitoring.metric')
+                    ->defaultValue('default')
                 ->end()
-                ->arrayNode('document_count')
+                ->arrayNode('metrics')
                     ->prototype('array')
-                    ->children()
-                        ->scalarNode('name')
-                            ->isRequired()
-                        ->end()
-                        ->scalarNode('document')
-                            ->isRequired()
+                        ->prototype('array')
+                        ->children()
+                            ->scalarNode('name')
+                                ->isRequired()
+                            ->end()
+                            ->scalarNode('document')
+                                ->isRequired()
+                                ->end()
                             ->end()
                         ->end()
-                    ->end()
                 ->end()
             ->end();
 

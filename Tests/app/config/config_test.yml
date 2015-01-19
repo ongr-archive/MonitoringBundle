@@ -38,8 +38,11 @@ ongr_monitoring:
         repository: es.manager.monitoring.event
         commands:
             - ongr:monitoring:metrics:collect
-    metric_collectors:
+    metric_collector:
         repository: es.manager.monitoring.metric
-        document_count:
-            - { name: foo, document: AcmeTestBundle:Product }
-            - { name: bar, document: ONGRMonitoringBundle:Metric }
+        metrics:
+            document_count:
+                - { name: foo, document: es.manager.monitoring.product }
+                - { name: bar, document: es.manager.monitoring.metric }
+            foo_product:
+                - { name: foo_product, document: es.manager.monitoring.product }
