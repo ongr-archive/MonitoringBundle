@@ -49,13 +49,13 @@ class CollectorServiceTest extends \PHPUnit_Framework_TestCase
 
         $metrics = [];
         $metric1 = $this->getMetricMock();
-        $metric1->expects($this->any())->method('getRepositoryClass')->willReturn('ONGRMonitoringBundle:Metric');
+        $metric1->expects($this->any())->method('getRepository')->willReturn('ONGRMonitoringBundle:Metric');
         $metric1->expects($this->once())->method('getName');
         $metric1->expects($this->once())->method('getValue');
         $metrics['metric 1'] = $metric1;
 
         $metric2 = $this->getMetricMock();
-        $metric1->expects($this->any())->method('getRepositoryClass')->willReturn('ONGRMonitoringBundle:Event');
+        $metric1->expects($this->any())->method('getRepository')->willReturn('ONGRMonitoringBundle:Event');
         $metric2->expects($this->once())->method('getName');
         $metric2->expects($this->once())->method('getValue');
         $metrics['metric 2'] = $metric2;

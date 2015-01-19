@@ -38,12 +38,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 $expectedConfiguration,
                 [
                     'es_manager' => 'foo_manager',
-                    'metric_collectors' => [
-                        'repository' => 'es.manager.monitoring.metric',
-                        'document_count' => [],
+                    'metric_collector' => [
+                        'repository' => 'default',
+                        'metrics' => [],
                     ],
                     'commands' => [
-                        'repository' => 'es.manager.monitoring.event',
+                        'repository' => 'default',
                         'commands' => [],
                     ],
                 ]
@@ -54,12 +54,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $out[] = [
             [
                 'es_manager' => 'foo_manager',
-                'metric_collectors' => [
-                    'repository' => 'es.manager.monitoring.metric',
-                    'document_count' => [
-                        [
-                            'name' => 'name',
-                            'document' => 'es.manager.monitoring.metric',
+                'metric_collector' => [
+                    'repository' => 'default',
+                    'metrics' => [
+                        'document_count' => [
+                            [
+                                'name' => 'name',
+                                'document' => 'es.manager.monitoring.metric',
+                            ],
                         ],
                     ],
                 ],
@@ -68,17 +70,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 $expectedConfiguration,
                 [
                     'es_manager' => 'foo_manager',
-                    'metric_collectors' => [
-                        'repository' => 'es.manager.monitoring.metric',
-                        'document_count' => [
-                            [
-                                'name' => 'name',
-                                'document' => 'es.manager.monitoring.metric',
+                    'metric_collector' => [
+                        'repository' => 'default',
+                        'metrics' => [
+                            'document_count' => [
+                                [
+                                    'name' => 'name',
+                                    'document' => 'es.manager.monitoring.metric',
+                                ],
                             ],
                         ],
                     ],
                     'commands' => [
-                        'repository' => 'es.manager.monitoring.event',
+                        'repository' => 'default',
                         'commands' => [],
                     ],
                 ]
@@ -106,9 +110,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'fooCommand',
                         ],
                     ],
-                    'metric_collectors' => [
-                        'repository' => 'es.manager.monitoring.metric',
-                        'document_count' => [],
+                    'metric_collector' => [
+                        'repository' => 'default',
+                        'metrics' => [],
                     ],
                 ]
             ),

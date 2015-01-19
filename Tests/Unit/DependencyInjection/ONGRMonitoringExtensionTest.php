@@ -31,6 +31,7 @@ class ONGRMonitoringExtensionTest extends \PHPUnit_Framework_TestCase
         ];
 
         return [
+            // Case #0 test default manager.
             [
                 [],
                 'ongr_monitoring.es_manager',
@@ -41,29 +42,75 @@ class ONGRMonitoringExtensionTest extends \PHPUnit_Framework_TestCase
                 'ongr_monitoring.es_manager',
                 'monitoring',
             ],
+            // Case #1 test active metrics parameter.
             [
                 [
                     'ongr_monitoring' => [
-                        'metric_collectors' => [
-                            'document_count' => [
-                                [
-                                    'name' => 'foo',
-                                    'document' => 'AcmeTestBundle:Foo',
+                        'metric_collector' => [
+                            'metrics' => [
+                                'document_count' => [
+                                    [
+                                        'name' => 'foo',
+                                        'document' => 'es.manager.monitoring.foo',
+                                    ],
                                 ],
                             ],
                         ],
                     ],
                 ],
-                'ongr_monitoring.active_collectors',
+                'ongr_monitoring.active_metrics',
                 [
-                    'repository' => 'es.manager.monitoring.metric',
                     'document_count' => [
                         [
                             'name' => 'foo',
-                            'document' => 'AcmeTestBundle:Foo',
+                            'document' => 'es.manager.monitoring.foo',
                         ],
                     ],
                 ],
+            ],
+            // Case #2 test default metric collector repository.
+            [
+                [
+                    'ongr_monitoring' => [
+                        'metric_collector' => [
+                            'metrics' => [],
+                        ],
+                    ],
+                ],
+                'ongr_monitoring.metric_collector.repository',
+                'es.manager.monitoring.metric',
+            ],
+            // Case #3 test default commands repository.
+            [
+                [
+                    'ongr_monitoring' => [],
+                ],
+                'ongr_monitoring.commands.repository',
+                'es.manager.monitoring.event',
+            ],
+            // Case #4 test non default commands repository.
+            [
+                [
+                    'ongr_monitoring' => [
+                        'commands' => [
+                            'repository' => 'es.manager.monitoring.foo',
+                        ],
+                    ],
+                ],
+                'ongr_monitoring.commands.repository',
+                'es.manager.monitoring.foo',
+            ],
+            // Case #5 test non default metric repository.
+            [
+                [
+                    'ongr_monitoring' => [
+                        'metric_collector' => [
+                            'repository' => 'es.manager.monitoring.bar',
+                        ],
+                    ],
+                ],
+                'ongr_monitoring.metric_collector.repository',
+                'es.manager.monitoring.bar',
             ],
         ];
     }

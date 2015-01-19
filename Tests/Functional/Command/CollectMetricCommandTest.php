@@ -65,9 +65,9 @@ class CollectMetricCommandTest extends ElasticsearchTestCase
         );
 
         $this->assertEquals(
-            2,
+            3,
             $this->getDocumentCount('ONGRMonitoringBundle:Metric'),
-            'Should be created 2 metric records'
+            'Should be created 3 metric records'
         );
     }
 
