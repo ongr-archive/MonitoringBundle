@@ -33,18 +33,18 @@ class DocumentCount implements MetricInterface
     /**
      * @var string
      */
-    protected $repositoryClass;
+    protected $repository;
 
     /**
      * @param Manager $manager
      * @param string  $name
-     * @param string  $repositoryClass
+     * @param string  $repository
      */
-    public function __construct($manager, $name = null, $repositoryClass = null)
+    public function __construct($manager, $name = null, $repository = null)
     {
         $this->manager = $manager;
         $this->name = $name;
-        $this->repositoryClass = $repositoryClass;
+        $this->repository = $repository;
     }
 
     /**
@@ -54,13 +54,11 @@ class DocumentCount implements MetricInterface
      */
     public function getValue()
     {
-        $repository = $this->manager->getRepository($this->getRepositoryClass());
-        if (!$repository) {
-            $repository = $this->manager->getRepository('ONGRMonitoringBundle:Metric');
-        }
+        /** @var Repository $repository */
+        $repository = $this->repository;
 
-        $search = $repository->createSearch()->addQuery(new MatchAllQuery());
-
+        $search = $repository->createSearch();
+        $search->addQuery(new MatchAllQuery());
         $results = $repository->execute($search, Repository::RESULTS_RAW_ITERATOR);
 
         return $results->getTotalCount();
@@ -74,15 +72,5 @@ class DocumentCount implements MetricInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get metric repository class.
-     *
-     * @return string
-     */
-    public function getRepositoryClass()
-    {
-        return $this->repositoryClass;
     }
 }
