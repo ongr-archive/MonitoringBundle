@@ -43,6 +43,6 @@ ongr_monitoring:
         metrics:
             document_count:
                 - { name: foo, document: es.manager.monitoring.product }
-                - { name: bar, document: es.manager.monitoring.metric }
+                - { name: bar, document: es.manager.monitoring.event }
             foo_product:
                 - { name: foo_product, document: es.manager.monitoring.product }

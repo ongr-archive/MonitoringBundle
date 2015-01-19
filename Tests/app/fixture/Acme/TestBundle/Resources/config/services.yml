@@ -1,0 +1,9 @@
+parameters:
+  acme_demo.metric.foo_product.class: ONGR\MonitoringBundle\Tests\app\fixture\Acme\TestBundle\Metric\FooProduct
+services:
+  acme_demo.metric.foo_product:
+    class: %acme_demo.metric.foo_product.class%
+    arguments:
+        - @ongr_monitoring.es_manager
+    tags:
+        - { name: ongr_monitoring.metric, metric: foo_product }
