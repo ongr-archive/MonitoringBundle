@@ -1,9 +1,9 @@
-Configuration
--------------
+Usage
+-----
 
 Enable Monitoring bundle in your ``AppKernel.php``:
 
-``ONGRElasticsearchBundle`` must be enabled before ``ONGRMonitoringBUndle``.
+``ONGRElasticsearchBundle`` must be enabled before ``ONGRMonitoringBundle``.
 
 .. code-block:: php
 
@@ -14,6 +14,7 @@ Enable Monitoring bundle in your ``AppKernel.php``:
            new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
            ...
            new ONGR\MonitoringBundle\ONGRMonitoringBundle(),
+           ...
        ];
    }
 
