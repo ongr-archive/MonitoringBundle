@@ -26,35 +26,20 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
     public function testProcess()
     {
         $container = $this->getContainerMock();
-        $esMetadataCollector = $this
-            ->getMockBuilder('ONGR\ElasticsearchBundle\Mapping\MetadataCollector')
-            ->disableOriginalConstructor()
-            ->setMethods(['getMappingByNamespace'])
-            ->getMock();
-        $esMetadataCollector
-            ->expects($this->once())
-            ->method('getMappingByNamespace')
-            ->with('ONGRMonitoringBundle:Metric')
-            ->willReturn(true);
-
-        $container
-            ->expects($this->once())
-            ->method('get')
-            ->with('es.metadata_collector')
-            ->willReturn($esMetadataCollector);
 
         $container->setDefinition('es.metadata_collector', new Definition());
         $container->setDefinition('es.manager.monitoring', new Definition());
         $container->setParameter('ongr_monitoring.es_manager', 'monitoring');
         $container->setDefinition('ongr_monitoring.metric_collector', new Definition());
+        $container->setDefinition('es.manager.monitoring.metric', new Definition());
 
         $container->setParameter(
-            'ongr_monitoring.active_collectors',
+            'ongr_monitoring.active_metrics',
             [
                 'document_count' => [
                     [
                         'name' => 'foo',
-                        'document' => 'ONGRMonitoringBundle:Metric',
+                        'document' => 'es.manager.monitoring.metric',
                     ],
                 ],
             ]
@@ -92,98 +77,6 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test exception when es.metadata_collector is not set.
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Could not load es.metadata collector. ElasticsearchBundle not enabled?
-     */
-    public function testEsMetadataCollectorNotSet()
-    {
-        $container = $this->getContainerMock();
-
-        $container
-            ->expects($this->once())
-            ->method('get')
-            ->with('es.metadata_collector')
-            ->willReturn(false);
-
-        $container->setDefinition('es.metadata_collector', new Definition());
-        $container->setDefinition('es.manager.monitoring', new Definition());
-        $container->setParameter('ongr_monitoring.es_manager', 'monitoring');
-        $container->setDefinition('ongr_monitoring.metric_collector', new Definition());
-
-        $container->setParameter(
-            'ongr_monitoring.active_collectors',
-            [
-                'document_count' => [
-                    [
-                        'name' => 'foo',
-                        'document' => 'ONGRMonitoringBundle:Metric',
-                    ],
-                ],
-            ]
-        );
-
-        $definition = new Definition();
-        $definition->addTag('ongr_monitoring.metric', ['metric' => 'document_count']);
-        $container->setDefinition('ongr_monitoring.document_count.metric', $definition);
-
-        $pass = new CollectorMetricsPass();
-        $pass->process($container);
-    }
-
-    /**
-     * Test exception when document mapping not found.
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage
-     */
-    public function testDocumentMappingNotFound()
-    {
-        $container = $this->getContainerMock();
-
-        $esMetadataCollector = $this
-            ->getMockBuilder('ONGR\ElasticsearchBundle\Mapping\MetadataCollector')
-            ->disableOriginalConstructor()
-            ->setMethods(['getMappingByNamespace'])
-            ->getMock();
-        $esMetadataCollector
-            ->expects($this->once())
-            ->method('getMappingByNamespace')
-            ->with('ONGRMonitoring:Metric');
-
-        $container
-            ->expects($this->once())
-            ->method('get')
-            ->with('es.metadata_collector')
-            ->willReturn($esMetadataCollector);
-
-        $container->setDefinition('es.metadata_collector', new Definition());
-        $container->setDefinition('es.manager.monitoring', new Definition());
-        $container->setParameter('ongr_monitoring.es_manager', 'monitoring');
-        $container->setDefinition('ongr_monitoring.metric_collector', new Definition());
-
-        $container->setParameter(
-            'ongr_monitoring.active_collectors',
-            [
-                'document_count' => [
-                    [
-                        'name' => 'foo',
-                        'document' => 'ONGRMonitoring:Metric',
-                    ],
-                ],
-            ]
-        );
-
-        $definition = new Definition();
-        $definition->addTag('ongr_monitoring.metric', ['metric' => 'document_count']);
-        $container->setDefinition('ongr_monitoring.document_count.metric', $definition);
-
-        $pass = new CollectorMetricsPass();
-        $pass->process($container);
-    }
-
-    /**
      * Tests incorrect metric configuration.
      *
      * @expectedException \RuntimeException
@@ -197,7 +90,7 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
 
         $container->setParameter('ongr_monitoring.es_manager', 'monitoring');
         $container->setParameter(
-            'ongr_monitoring.active_collectors',
+            'ongr_monitoring.active_metrics',
             [
                 'document_count' => [
                     [
@@ -211,6 +104,39 @@ class CollectorMetricsPassTest extends \PHPUnit_Framework_TestCase
         $definition = new Definition();
         $definition->addTag('ongr_monitoring.metric', ['BAD NAME' => 'metric ']);
         $container->setDefinition('ongr_monitoring.fake.metric', $definition);
+
+        $pass = new CollectorMetricsPass();
+        $pass->process($container);
+    }
+
+    /**
+     * Tests when repository does not exists in ES.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Repository service does not exists: es.manager.monitoring.foo
+     */
+    public function testRepositoryNotFoundException()
+    {
+        $container = new ContainerBuilder();
+        $container->setDefinition('ongr_monitoring.metric_collector', new Definition());
+        $container->setDefinition('es.manager.monitoring', new Definition());
+        $container->setParameter('ongr_monitoring.es_manager', 'monitoring');
+
+        $container->setParameter(
+            'ongr_monitoring.active_metrics',
+            [
+                'document_count' => [
+                    [
+                        'name' => 'foo',
+                        'document' => 'es.manager.monitoring.foo',
+                    ],
+                ],
+            ]
+        );
+
+        $definition = new Definition();
+        $definition->addTag('ongr_monitoring.metric', ['metric' => 'document_count']);
+        $container->setDefinition('ongr_monitoring.document_count.metric', $definition);
 
         $pass = new CollectorMetricsPass();
         $pass->process($container);

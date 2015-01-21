@@ -40,7 +40,7 @@ class CollectorMetricsPass implements CompilerPassInterface
         $service = $container->getDefinition('ongr_monitoring.metric_collector');
 
         $taggedDefinitions = $container->findTaggedServiceIds('ongr_monitoring.metric');
-        $metrics = $container->getParameter('ongr_monitoring.active_collectors');
+        $metrics = $container->getParameter('ongr_monitoring.active_metrics');
         $collectors = [];
         foreach ($taggedDefinitions as $id => $tags) {
             foreach ($tags as $tag) {
@@ -49,42 +49,19 @@ class CollectorMetricsPass implements CompilerPassInterface
                         "All services tagged with 'ongr_monitoring.metric' must have 'name' property set."
                     );
                 }
-                if (isset($metrics[$tag['metric']])) {
-                    foreach ($metrics[$tag['metric']] as $metric) {
-                        $this->checkIfDocumentMapped($metric['document'], $container);
-                        $collectors[$metric['name']] = new Definition(
-                            new Reference($id),
-                            [$managerDefinition, $metric['name'], $metric['document']]
+                foreach ($metrics[$tag['metric']] as $metric) {
+                    if (!$container->hasDefinition($metric['document'])) {
+                        throw new \RuntimeException(
+                            "Repository service does not exists: {$metric['document']}"
                         );
                     }
+                    $collectors[$metric['name']] = new Definition(
+                        new Reference($id),
+                        [$managerDefinition, $metric['name'], new Reference($metric['document'])]
+                    );
                 }
             }
         }
         $service->addArgument($collectors);
-    }
-
-    /**
-     * Checks if document has mapping data in ES metadata collector.
-     *
-     * @param string           $documentClass
-     * @param ContainerBuilder $container
-     *
-     * @throws \RuntimeException
-     */
-    private function checkIfDocumentMapped($documentClass, ContainerBuilder $container)
-    {
-        $metadataCollector = $container->get('es.metadata_collector');
-
-        if (!$metadataCollector) {
-            throw new \RuntimeException(
-                'Could not load es.metadata collector. ElasticsearchBundle not enabled?'
-            );
-        }
-
-        if (!$metadataCollector->getMappingByNamespace($documentClass)) {
-            throw new \RuntimeException(
-                "Invalid ES document mapping for class: {$documentClass}"
-            );
-        }
     }
 }

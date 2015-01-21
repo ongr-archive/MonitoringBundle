@@ -1,6 +1,8 @@
 Command events logging
 ----------------------
 
+Logging will be enabled only for commands listed under ``commands`` configuration node.
+
 Command events monitoring configuration example:
 
 .. code-block:: yaml
@@ -16,10 +18,10 @@ Command events monitoring configuration example:
 
 All mapped documents has repository service.
 
-e.g. ``es.manager.*manager_name*.*lovercased_document_name*``
+e.g. ``es.manager.*manager_name*.*lowercase_document_name*``
 
 
-EVENTS
+Events
 ======
 
 There are three command events ``console.command``, ``console.terminate`` and ``console.exception``

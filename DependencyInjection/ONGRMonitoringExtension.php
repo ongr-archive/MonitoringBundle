@@ -13,7 +13,6 @@ namespace ONGR\MonitoringBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -35,27 +34,69 @@ class ONGRMonitoringExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
-        if (!empty($config['es_manager'])) {
-            $container->setParameter('ongr_monitoring.es_manager', $config['es_manager']);
+        $container->setParameter('ongr_monitoring.es_manager', $config['es_manager']);
+
+        $this->configureCollector($container, $config);
+        $this->configureCommands($container, $config);
+    }
+
+    /**
+     * Configure metric collector.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $config
+     */
+    public function configureCollector(ContainerBuilder $container, $config)
+    {
+        $metrics = [];
+        if (!empty($config['metric_collector']) && !empty($config['metric_collector']['metrics'])) {
+            $metrics = $config['metric_collector']['metrics'];
+        }
+        $container->setParameter('ongr_monitoring.active_metrics', $metrics);
+
+        if ($config['metric_collector']['repository'] == 'default') {
+            $metricRepository = sprintf(
+                'es.manager.%s.%s',
+                strtolower($config['es_manager']),
+                'metric'
+            );
+        } else {
+            $metricRepository = $config['metric_collector']['repository'];
         }
 
-        $activeCollectors = [];
-        if (!empty($config['metric_collectors'])) {
-            $activeCollectors = $config['metric_collectors'];
-        }
-        $container->setParameter('ongr_monitoring.active_collectors', $activeCollectors);
+        $container->setParameter('ongr_monitoring.metric_collector.repository', $metricRepository);
 
         $metricCollector = $container->getDefinition('ongr_monitoring.metric_collector');
-        $metricCollector->addArgument(new Reference($config['metric_collectors']['repository']));
+        $metricCollector->addArgument(new Reference($metricRepository));
+    }
+
+    /**
+     * Register listeners and sets command events repository.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $config
+     */
+    public function configureCommands(ContainerBuilder $container, $config)
+    {
+        if ($config['commands']['repository'] == 'default') {
+            $eventRepository = sprintf(
+                'es.manager.%s.%s',
+                strtolower($config['es_manager']),
+                'event'
+            );
+        } else {
+            $eventRepository = $config['commands']['repository'];
+        }
 
         $taggedServices = $container->findTaggedServiceIds('kernel.event_listener');
         foreach ($taggedServices as $id => $tags) {
             $definition = $container->findDefinition($id);
             $definition->addMethodCall(
                 'setRepository',
-                [new Reference($config['commands']['repository'])]
+                [new Reference($eventRepository)]
             );
         }
+        $container->setParameter('ongr_monitoring.commands.repository', $eventRepository);
 
         $trackedCommands = !empty($config['commands']['commands']) ? $config['commands']['commands'] : [];
         $container->setParameter('ongr_monitoring.tracked_commands', $trackedCommands);

@@ -1,9 +1,9 @@
-Configuration
--------------
+Usage
+-----
 
 Enable Monitoring bundle in your ``AppKernel.php``:
 
-``ONGRElasticsearchBundle`` must be enabled before ``ONGRMonitoringBUndle``.
+``ONGRElasticsearchBundle`` must be enabled before ``ONGRMonitoringBundle``.
 
 .. code-block:: php
 
@@ -14,6 +14,7 @@ Enable Monitoring bundle in your ``AppKernel.php``:
            new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
            ...
            new ONGR\MonitoringBundle\ONGRMonitoringBundle(),
+           ...
        ];
    }
 
@@ -45,11 +46,14 @@ Example yaml configuration:
             repository: es.manager.monitoring.event
             commands:
                 - ongr:monitoring:metrics:collect
-        metric_collectors:
+        metric_collector:
             repository: es.manager.monitoring.metric
+            metrics:
             document_count:
-                - { name: foo, document: AcmeTestBundle:Product }
-                - { name: bar, document: ONGRMonitoringBundle:Metric }
+                - { name: foo, document: es.manager.monitoring.product }
+                - { name: bar, document: es.manager.monitoring.event }
+            foo_product:
+                - { name: foo_product, document: es.manager.monitoring.product }
 
 
 Monitoring ES manager must have mappings for ONGRMonitoringBundle and for bundles which will be monitored.

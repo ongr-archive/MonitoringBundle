@@ -3,38 +3,23 @@
 /*
  * This file is part of the ONGR package.
  *
- * (c) NFQ Technologies UAB <info@nfq.com>
+ * Copyright (c) 2014-2015 NFQ Technologies UAB
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace ONGR\MonitoringBundle\Metric;
+namespace ONGR\MonitoringBundle\Tests\app\fixture\Acme\TestBundle\Metric;
 
 use ONGR\ElasticsearchBundle\DSL\Query\MatchAllQuery;
-use ONGR\ElasticsearchBundle\ORM\Manager;
 use ONGR\ElasticsearchBundle\ORM\Repository;
+use ONGR\MonitoringBundle\Metric\MetricInterface;
 
 /**
- * Counts documents on defined type.
+ * Custom metric collector.
  */
-class DocumentCount implements MetricInterface
+class FooProduct implements MetricInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var Manager
-     */
-    protected $manager;
-
-    /**
-     * @var string
-     */
-    protected $repository;
-
     /**
      * @param Manager $manager
      * @param string  $name
@@ -54,11 +39,10 @@ class DocumentCount implements MetricInterface
      */
     public function getValue()
     {
-        /** @var Repository $repository */
         $repository = $this->repository;
 
-        $search = $repository->createSearch();
-        $search->addQuery(new MatchAllQuery());
+        /** @var Search $search */
+        $search = $repository->createSearch()->addQuery(new MatchAllQuery());
         $results = $repository->execute($search, Repository::RESULTS_RAW_ITERATOR);
 
         return $results->getTotalCount();
@@ -71,6 +55,6 @@ class DocumentCount implements MetricInterface
      */
     public function getName()
     {
-        return $this->name;
+        return 'foo_product';
     }
 }
