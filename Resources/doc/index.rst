@@ -8,6 +8,9 @@ Contents:
 
 .. toctree::
     :maxdepth: 1
-    :glob:
+    :titlesonly:
 
-    *
+    setup
+    usage
+    metric_collector
+    command_events
