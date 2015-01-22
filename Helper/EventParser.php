@@ -57,6 +57,6 @@ class EventParser
      */
     public function getArgument($event)
     {
-        return str_replace('\'' . $event->getCommand()->getName() . '\' ', '', $event->getInput());
+        return str_replace($event->getInput()->getFirstArgument(), '', $event->getInput());
     }
 }
