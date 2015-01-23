@@ -1,11 +1,10 @@
-=================
 Monitoring bundle
 =================
 
 Introduction
 ~~~~~~~~~~~~
 
-Provides tools for monitoring ONGR projects.
+Provides tools for monitoring ONGR projects. Provides metric and commands events logging to ES.
 
 Documentation
 ~~~~~~~~~~~~~
