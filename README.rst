@@ -10,7 +10,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 Documentation for ONGRMonitoringBundle can be found in
-`here <http://ongr.readthedocs.org/en/latest/sources/MonitoringBundle.git/Resources/doc/index.html>`_.
+`here <https://ongr.readthedocs.org/en/latest/components/MonitoringBundle/index.html>`_.
 
 License
 ~~~~~~~
