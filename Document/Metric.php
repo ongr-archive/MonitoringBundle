@@ -12,18 +12,15 @@
 namespace ONGR\MonitoringBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\DocumentInterface;
-use ONGR\ElasticsearchBundle\Document\DocumentTrait;
+use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Metric document.
  *
  * @ES\Document(type="metric")
  */
-class Metric implements DocumentInterface
+class Metric extends AbstractDocument
 {
-    use DocumentTrait;
-
     /**
      * @var string
      *
