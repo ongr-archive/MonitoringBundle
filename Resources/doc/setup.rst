@@ -27,7 +27,6 @@ Enable Monitoring bundle in your AppKernel:
         $bundles = return [
            ...
            new ONGR\ElasticsearchBundle\ONGRElasticsearchBundle(),
-           ...
            new ONGR\MonitoringBundle\ONGRMonitoringBundle(),
            ...
        ];
@@ -69,6 +68,6 @@ This configuration will enable logging of ``ongr:monitoring:metrics:collect`` co
 Step 4: User your new bundle
 ----------------------------
 
-Usage documentation for Monitoring bundle is available in `<usage.rst>`_.
+Usage documentation for Monitoring bundle is available `here <usage.rst>`_.
 
 .. _Composer: https://getcomposer.org
