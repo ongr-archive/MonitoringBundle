@@ -12,18 +12,15 @@
 namespace ONGR\MonitoringBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\DocumentInterface;
-use ONGR\ElasticsearchBundle\Document\DocumentTrait;
+use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Event document.
  *
  * @ES\Document(type="event")
  */
-class Event implements DocumentInterface
+class Event extends AbstractDocument
 {
-    use DocumentTrait;
-
     const EVENT_STARTED = 'started';
     const EVENT_TERMINATED = 'completed';
     const EVENT_EXCEPTION = 'exception';

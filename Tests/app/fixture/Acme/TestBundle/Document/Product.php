@@ -12,18 +12,15 @@
 namespace ONGR\MonitoringBundle\Tests\app\fixture\Acme\TestBundle\Document;
 
 use ONGR\ElasticsearchBundle\Annotation as ES;
-use ONGR\ElasticsearchBundle\Document\DocumentInterface;
-use ONGR\ElasticsearchBundle\Document\DocumentTrait;
+use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 
 /**
  * Product document.
  *
  * @ES\Document
  */
-class Product implements DocumentInterface
+class Product extends AbstractDocument
 {
-    use DocumentTrait;
-
     /**
      * @var string
      *
