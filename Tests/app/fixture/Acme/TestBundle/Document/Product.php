@@ -17,7 +17,7 @@ use ONGR\ElasticsearchBundle\Document\AbstractDocument;
 /**
  * Product document.
  *
- * @ES\Document
+ * @ES\Document(type="product")
  */
 class Product extends AbstractDocument
 {
