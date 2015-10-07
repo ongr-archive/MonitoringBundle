@@ -24,7 +24,7 @@ class Product extends AbstractDocument
     /**
      * @var string
      *
-     * @ES\Property(name="title", type="string", search_analyzer="standard")
+     * @ES\Property(name="title", type="string", searchAnalyzer="standard")
      */
     public $title;
 
